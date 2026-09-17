@@ -38,179 +38,236 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input.date-picker-dark { color: #fde047; font-weight: 600; color-scheme: dark; }
-        input.date-picker-dark::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(350deg); opacity: 0.9; }
+        /* ปรับสีไอคอนปฏิทินให้เป็นสีทองสว่าง */
+        input.date-picker-dark { color: #fde047; font-weight: 700; color-scheme: dark; font-size: 1.05rem; }
+        input.date-picker-dark::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(80%) sepia(100%) saturate(400%) hue-rotate(350deg); opacity: 1; transform: scale(1.2); }
     </style>
 </head>
-<body class="bg-amber-50/10 min-h-screen pb-28 text-slate-800">
+<body class="bg-[#fcfaf8] min-h-screen pb-28 text-slate-800">
 
-    <!-- Login Screen -->
-    <div id="loginScreen" class="fixed inset-0 bg-velvet-dark z-[100] flex flex-col justify-center items-center p-6 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">
-                <i class="ph-fill ph-lock-key text-4xl text-amber-600"></i>
+    <!-- Login Screen (ธีมพรีเมียม) -->
+    <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-[#4a0808] to-[#2a0404] z-[100] flex flex-col justify-center items-center p-6 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-[32px] shadow-[0_0_40px_rgba(234,179,8,0.15)] w-full max-w-sm text-center border border-gold-main/20">
+            <div class="w-24 h-24 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg border-4 border-white">
+                <i class="ph-fill ph-lock-key text-5xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold heading-font text-velvet-dark mb-1">บารมีสมเด็จโต</h1>
-            <p class="text-sm text-slate-500 mb-6">เข้าสู่ระบบสำหรับเจ้าของร้าน</p>
+            <h1 class="text-3xl font-bold heading-font text-[#7a1019] mb-1">บารมีสมเด็จโต</h1>
+            <p class="text-sm text-slate-500 mb-8 font-medium">เข้าสู่ระบบสำหรับเจ้าของร้าน</p>
             
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div class="relative">
                     <i class="ph-bold ph-envelope absolute left-4 top-3.5 text-slate-400 text-lg"></i>
-                    <input type="email" id="loginEmail" required placeholder="อีเมลผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500">
+                    <input type="email" id="loginEmail" required placeholder="อีเมลผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
                 </div>
                 <div class="relative">
                     <i class="ph-bold ph-key absolute left-4 top-3.5 text-slate-400 text-lg"></i>
-                    <input type="password" id="loginPassword" required placeholder="รหัสผ่าน" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500">
+                    <input type="password" id="loginPassword" required placeholder="รหัสผ่าน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3.5 rounded-xl mt-2 shadow-lg hover:shadow-amber-500/30 transition-all">
+                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-[#eab308] to-[#a16207] text-white font-bold py-4 rounded-2xl mt-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-base">
                     เข้าสู่ระบบ
                 </button>
             </form>
         </div>
-        <p class="text-white/50 text-xs mt-8">Powered by PSU Siam Pro</p>
+        <p class="text-white/40 text-xs mt-8 font-medium">Powered by PSU Siam Pro</p>
+    </div>
+
+    <!-- Expired Screen (โชว์ตอนหมดอายุ) -->
+    <div id="expiredScreen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[150] flex flex-col justify-center items-center p-6 hidden">
+        <div class="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-sm text-center relative overflow-hidden">
+            <div class="absolute -top-4 -right-4 text-9xl text-rose-50 opacity-50"><i class="ph-fill ph-warning-octagon"></i></div>
+            <div class="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-5 relative z-10 border-4 border-white shadow-sm">
+                <i class="ph-fill ph-warning-circle text-5xl text-rose-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold heading-font text-slate-800 mb-2 relative z-10">สิ้นสุดช่วงทดลองใช้งาน</h1>
+            <p class="text-sm text-slate-500 mb-8 relative z-10 leading-relaxed">ระบบของท่านหมดอายุการใช้งานแล้ว กรุณาติดต่อผู้พัฒนาระบบเพื่อต่ออายุการใช้งานครับ</p>
+            <button onclick="alert('กรุณาแคปหน้าจอนี้ส่งให้ คุณพี ผู้พัฒนาระบบครับ')" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-lg relative z-10 transition-all hover:bg-slate-800 flex justify-center items-center gap-2">
+                <i class="ph-bold ph-phone text-xl"></i> ติดต่อคุณพี (ผู้ให้บริการ)
+            </button>
+            <button onclick="handleLogout()" class="w-full text-slate-400 hover:text-slate-600 font-bold py-3 text-sm mt-3 relative z-10 transition-colors">
+                ออกจากระบบ
+            </button>
+        </div>
     </div>
 
     <!-- Main App Container -->
     <div id="mainApp" class="hidden">
-        <div class="fixed top-4 right-4 z-50 flex gap-2">
-            <button onclick="hardRefresh()" class="bg-white/50 backdrop-blur border border-slate-200 text-slate-400 p-2.5 rounded-full hover:bg-white transition-all shadow-sm">
+        
+        <!-- Expiration Banner (โชว์เตือนก่อน 7 วัน) -->
+        <div id="expirationBanner" class="hidden bg-rose-600 text-white text-center py-2 text-xs font-bold shadow-md w-full z-50">
+            ⚠️ แจ้งเตือน: ระบบทดลองใช้งานจะหมดอายุในอีก <span id="expireDaysText"></span> วัน
+        </div>
+
+        <div class="fixed top-6 right-4 z-50 flex gap-2" id="btnGroupRight">
+            <button onclick="hardRefresh()" class="bg-white/20 backdrop-blur-md border border-white/30 text-white/90 p-2.5 rounded-full hover:bg-white/30 transition-all shadow-lg">
                 <i class="ph-bold ph-arrows-clockwise text-xl"></i>
             </button>
         </div>
         
-        <!-- ปุ่ม Logout -->
-        <div class="fixed top-4 left-4 z-50 flex gap-2">
-            <button onclick="handleLogout()" class="bg-white/10 backdrop-blur border border-white/20 text-white/80 p-2.5 rounded-full hover:bg-white/20 transition-all shadow-sm" title="ออกจากระบบ">
+        <div class="fixed top-6 left-4 z-50 flex gap-2" id="btnGroupLeft">
+            <button onclick="handleLogout()" class="bg-white/20 backdrop-blur-md border border-white/30 text-white/90 p-2.5 rounded-full hover:bg-white/30 transition-all shadow-lg" title="ออกจากระบบ">
                 <i class="ph-bold ph-sign-out text-xl"></i>
             </button>
         </div>
 
-        <!-- Header -->
-        <header class="bg-gradient-to-b from-velvet-dark to-velvet-main text-white px-4 md:px-8 pt-10 pb-28 rounded-b-[32px] shadow-lg relative z-10">
-            <div class="max-w-3xl mx-auto flex flex-col justify-center items-center text-center gap-4">
+        <!-- Header โฉมใหม่ (อลังการและชัดเจนขึ้น) -->
+        <header class="bg-gradient-to-b from-[#5c0a0a] via-[#7a1019] to-[#9b1b25] text-white px-4 md:px-8 pt-16 pb-36 rounded-b-[40px] shadow-[0_10px_30px_rgba(122,16,25,0.3)] relative z-10 overflow-hidden border-b-4 border-[#eab308]/40">
+            <div class="absolute inset-0 w-full h-full opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+            
+            <div class="max-w-3xl mx-auto flex flex-col justify-center items-center text-center gap-5 relative z-10">
                 <div>
-                    <p class="text-sm text-amber-200/80 font-medium mb-1">ระบบจัดการร้านพระเครื่อง</p>
-                    <h1 class="text-3xl md:text-4xl font-bold heading-font text-yellow-400">บารมีสมเด็จโต</h1>
+                    <p class="text-sm text-[#fde047]/80 font-bold mb-1.5 tracking-wider uppercase text-[11px]"><i class="ph-fill ph-crown text-yellow-400"></i> ระบบจัดการร้านพระเครื่อง</p>
+                    <h1 class="text-4xl md:text-5xl font-bold heading-font text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 drop-shadow-sm pb-1">บารมีสมเด็จโต</h1>
                 </div>
-                <div class="bg-velvet-dark/60 px-5 py-2.5 rounded-full text-sm font-medium border border-gold-main/30 flex items-center justify-center min-w-[200px]">
-                    <i class="ph-bold ph-calendar-blank mr-2 text-amber-200 text-lg"></i> 
+                
+                <!-- Date Picker รูปแบบใหม่ (แก้ตามรูปที่ลูกค้าวงมา) -->
+                <div class="bg-[#3a0606]/80 px-6 py-3.5 rounded-2xl text-sm font-medium border border-[#eab308]/50 shadow-[0_4px_20px_rgba(234,179,8,0.2)] flex items-center justify-center min-w-[220px] transition-all hover:bg-[#4a0808] hover:border-[#eab308] group cursor-pointer relative">
+                    <i class="ph-bold ph-calendar-blank mr-3 text-[#fde047] text-xl group-hover:scale-110 transition-transform"></i> 
                     <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-transparent outline-none cursor-pointer w-full date-picker-dark text-center" />
                 </div>
             </div>
         </header>
 
         <!-- Ledger Workspace (หน้าบัญชี) -->
-        <main id="ledgerWorkspace" class="max-w-3xl mx-auto px-4 md:px-8 -mt-20 relative z-10 space-y-4 transition-all duration-300">
+        <main id="ledgerWorkspace" class="max-w-3xl mx-auto px-4 md:px-8 -mt-24 relative z-10 space-y-4 transition-all duration-300">
             <div class="space-y-4">
                 <!-- Dashboard สรุปยอด -->
-                <div class="bg-gradient-to-br from-velvet-main to-velvet-dark p-6 rounded-3xl shadow-xl text-white border border-gold-main/20 relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 opacity-5 text-9xl"><i class="ph ph-bank"></i></div>
-                    <div class="flex justify-between items-start mb-3 relative z-10">
-                        <p class="text-amber-200/90 text-sm md:text-base font-medium flex items-center gap-1.5"><i class="ph-bold ph-chart-pie-slice"></i> ทรัพย์สินรวมสุทธิ</p>
-                        <span class="text-[10px] md:text-xs font-bold bg-amber-500/20 text-yellow-400 px-2.5 py-1 rounded border border-yellow-500/30">โหมดเจ้าของร้าน</span>
+                <div class="bg-gradient-to-br from-[#8a131c] to-[#4a0808] p-6 md:p-8 rounded-[32px] shadow-xl text-white border border-[#eab308]/30 relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-10 text-[180px] text-yellow-400"><i class="ph-fill ph-bank"></i></div>
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <p class="text-yellow-100/90 text-sm md:text-base font-medium flex items-center gap-2"><i class="ph-bold ph-chart-pie-slice text-yellow-400 text-lg"></i> ทรัพย์สินรวมสุทธิ</p>
+                        <span class="text-[10px] md:text-xs font-bold bg-yellow-400/20 text-yellow-300 px-3 py-1.5 rounded-full border border-yellow-400/30 backdrop-blur-sm shadow-sm"><i class="ph-fill ph-crown"></i> โหมดเจ้าของร้าน</span>
                     </div>
-                    <h2 id="totalAssetValue" class="text-4xl md:text-5xl font-bold heading-font tracking-tight text-white mb-6 relative z-10">0 ฿</h2>
-                    <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 text-xs md:text-sm relative z-10">
-                        <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-credit-card"></i> ยอดโอน</p><p id="totalTransferValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
-                        <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-coins"></i> เงินสด</p><p id="totalCashValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
+                    <h2 id="totalAssetValue" class="text-4xl md:text-5xl font-bold heading-font tracking-tight text-white mb-6 relative z-10 drop-shadow-md">0 ฿</h2>
+                    <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-5 text-xs md:text-sm relative z-10">
+                        <div><p class="text-yellow-100/70 mb-1.5 flex items-center gap-1.5 font-medium"><i class="ph-fill ph-credit-card text-yellow-400"></i> ยอดโอน</p><p id="totalTransferValue" class="font-bold text-lg md:text-xl text-white tracking-wide">0 ฿</p></div>
+                        <div><p class="text-yellow-100/70 mb-1.5 flex items-center gap-1.5 font-medium"><i class="ph-fill ph-coins text-yellow-400"></i> เงินสด</p><p id="totalCashValue" class="font-bold text-lg md:text-xl text-white tracking-wide">0 ฿</p></div>
                     </div>
                 </div>
 
                 <!-- รายรับ / รายจ่าย ประจำวัน -->
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
-                        <div class="bg-emerald-50 w-10 h-10 rounded-full flex items-center justify-center text-emerald-600 shrink-0"><i class="ph-bold ph-trend-up text-lg"></i></div>
-                        <div><p class="text-[11px] text-slate-500 font-medium">รายรับวันนี้</p><p id="dailyIncomeText" class="font-bold text-emerald-600 text-base">0 ฿</p></div>
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-3.5 transition-all hover:shadow-md">
+                        <div class="bg-emerald-50 w-12 h-12 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0"><i class="ph-bold ph-trend-up text-2xl"></i></div>
+                        <div><p class="text-[11px] text-slate-500 font-bold mb-0.5">รายรับวันนี้</p><p id="dailyIncomeText" class="font-bold text-emerald-600 text-lg">0 ฿</p></div>
                     </div>
-                    <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
-                        <div class="bg-rose-50 w-10 h-10 rounded-full flex items-center justify-center text-rose-600 shrink-0"><i class="ph-bold ph-trend-down text-lg"></i></div>
-                        <div><p class="text-[11px] text-slate-500 font-medium">รายจ่ายวันนี้</p><p id="dailyExpenseText" class="font-bold text-rose-600 text-base">0 ฿</p></div>
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-3.5 transition-all hover:shadow-md">
+                        <div class="bg-rose-50 w-12 h-12 rounded-2xl flex items-center justify-center text-rose-600 shrink-0"><i class="ph-bold ph-trend-down text-2xl"></i></div>
+                        <div><p class="text-[11px] text-slate-500 font-bold mb-0.5">รายจ่ายวันนี้</p><p id="dailyExpenseText" class="font-bold text-rose-600 text-lg">0 ฿</p></div>
                     </div>
                 </div>
                 
-                <div class="bg-amber-50/70 border border-amber-200/60 p-4 rounded-2xl flex items-center gap-3">
-                    <div class="bg-amber-100 w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 shrink-0"><i class="ph-bold ph-hand-coins text-lg"></i></div>
-                    <div><p class="text-xs text-amber-950/70 font-medium">กำไรสุทธิ (วันนี้)</p><p id="profitText" class="font-bold text-amber-900 text-lg">0 ฿</p></div>
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 p-4 rounded-3xl flex items-center gap-3.5 shadow-sm">
+                    <div class="bg-amber-100/80 w-12 h-12 rounded-2xl flex items-center justify-center text-amber-700 shrink-0 border border-amber-200/50"><i class="ph-bold ph-hand-coins text-2xl"></i></div>
+                    <div><p class="text-xs text-amber-950/70 font-bold mb-0.5">กำไรสุทธิ (วันนี้)</p><p id="profitText" class="font-bold text-amber-900 text-xl">0 ฿</p></div>
                 </div>
             </div>
 
-            <div class="pt-2">
+            <div class="pt-3">
                 <div class="relative flex items-center">
-                    <div class="absolute left-4 text-gold-main"><i class="ph-bold ph-magnifying-glass text-lg"></i></div>
-                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="ค้นหารายการ..." class="w-full bg-white/95 border-2 border-gold-main/60 focus:border-gold-dark text-slate-800 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400/20 shadow-sm font-medium"/>
+                    <div class="absolute left-4 text-[#a16207]"><i class="ph-bold ph-magnifying-glass text-xl"></i></div>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="ค้นหารายการบัญชี..." class="w-full bg-white border-2 border-amber-200/60 focus:border-[#eab308] text-slate-800 rounded-[20px] pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400/10 shadow-sm font-medium transition-all"/>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center pt-4 border-t border-slate-200/60">
-                <h3 class="font-bold heading-font text-slate-800 flex items-center gap-2 text-lg"><i class="ph-bold ph-book-open text-velvet-main"></i> รายการบัญชี</h3>
-                <span id="txCountBadge" class="text-xs bg-slate-200/70 text-slate-600 px-3 py-1 rounded-full font-semibold">0 รายการ</span>
+            <div class="flex justify-between items-center pt-5 border-t border-slate-200/80">
+                <h3 class="font-bold heading-font text-slate-800 flex items-center gap-2 text-lg"><i class="ph-fill ph-book-bookmark text-[#7a1019] text-xl"></i> รายการบัญชี</h3>
+                <!-- ปุ่ม Export CSV อยู่ตรงนี้ครับ -->
+                <div class="flex gap-2 items-center">
+                    <button onclick="openExportModal()" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors border border-emerald-200 shadow-sm"><i class="ph-bold ph-file-csv text-base"></i> โหลด CSV</button>
+                    <span id="txCountBadge" class="text-xs bg-slate-100 text-slate-600 px-3 py-2 rounded-xl font-bold border border-slate-200">0 รายการ</span>
+                </div>
             </div>
-            <div id="txContainer" class="space-y-3 min-h-[150px]"></div>
+            <div id="txContainer" class="space-y-3 min-h-[150px] pb-4"></div>
         </main>
 
         <!-- Stock Workspace (หน้าตู้พระ) -->
         <div id="stockWorkspace" class="hidden max-w-3xl mx-auto px-4 md:px-8 mt-6 pb-28 space-y-4 transition-all duration-300 animate-in fade-in relative z-10">
-            <div class="bg-gradient-to-br from-amber-700 to-amber-900 text-white p-5 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between items-start gap-4">
-                <i class="ph ph-grid-four absolute -right-6 -bottom-6 text-9xl text-white/5"></i>
+            <div class="bg-gradient-to-br from-[#a16207] to-[#713f12] text-white p-6 md:p-8 rounded-[32px] shadow-xl relative overflow-hidden flex flex-col justify-between items-start gap-4 border border-yellow-600/30">
+                <i class="ph-fill ph-grid-four absolute -right-6 -bottom-6 text-[160px] text-white/10"></i>
                 <div class="relative z-10 w-full">
-                    <div class="flex justify-between items-start mb-2">
-                        <h2 class="text-xl font-bold heading-font flex items-center gap-2 text-yellow-300"><i class="ph-bold ph-grid-four"></i> ตู้พระ / สต็อกสินค้า</h2>
+                    <div class="flex justify-between items-start mb-3">
+                        <h2 class="text-xl md:text-2xl font-bold heading-font flex items-center gap-2 text-yellow-200 drop-shadow-sm"><i class="ph-fill ph-grid-four"></i> ตู้พระ / สต็อกสินค้า</h2>
                         <div class="text-right">
-                            <p class="text-[10px] text-amber-200">มูลค่ารวม (<span id="totalStockCount">0 องค์</span>)</p>
-                            <p id="totalStockValue" class="text-2xl font-bold">0 ฿</p>
+                            <p class="text-[10px] md:text-xs text-amber-200 font-medium mb-1">มูลค่ารวม (<span id="totalStockCount">0 องค์</span>)</p>
+                            <p id="totalStockValue" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0 ฿</p>
                         </div>
                     </div>
-                    <button onclick="openDirectoryModal()" class="bg-white/20 hover:bg-white/30 border border-white/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 mt-2"><i class="ph-bold ph-books"></i> เปิดทำเนียบพิมพ์พระ</button>
+                    <button onclick="openDirectoryModal()" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 mt-2 shadow-sm"><i class="ph-bold ph-books text-base"></i> เปิดทำเนียบพิมพ์พระ</button>
                 </div>
             </div>
             
-            <div class="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-                <button onclick="setStockTab('ALL')" id="stkTab_ALL" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-800 transition-colors">ทั้งหมด</button>
-                <button onclick="setStockTab('AVAILABLE')" id="stkTab_AVAILABLE" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">พร้อมเช่า</button>
-                <button onclick="setStockTab('RESERVED')" id="stkTab_RESERVED" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">มัดจำ/ผ่อน</button>
-                <button onclick="setStockTab('SOLD')" id="stkTab_SOLD" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">ประวัติการปล่อย</button>
+            <div class="flex overflow-x-auto gap-2.5 pb-2 pt-2 hide-scrollbar">
+                <button onclick="setStockTab('ALL')" id="stkTab_ALL" class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-[#fef3c7] text-[#92400e] transition-all shadow-sm border border-[#fde68a]">ทั้งหมด</button>
+                <button onclick="setStockTab('AVAILABLE')" id="stkTab_AVAILABLE" class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-all hover:bg-slate-50">พร้อมเช่า</button>
+                <button onclick="setStockTab('RESERVED')" id="stkTab_RESERVED" class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-all hover:bg-slate-50">มัดจำ/ผ่อน</button>
+                <button onclick="setStockTab('SOLD')" id="stkTab_SOLD" class="shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-all hover:bg-slate-50">ประวัติการปล่อย</button>
             </div>
 
             <div class="relative flex items-center">
-                <i class="ph-bold ph-magnifying-glass absolute left-4 text-slate-400 text-lg"></i>
-                <input type="text" id="stockSearch" oninput="renderStock()" placeholder="ค้นหารหัส หรือ ชื่อพระ..." class="w-full bg-white/95 border border-slate-200 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500 shadow-sm"/>
+                <i class="ph-bold ph-magnifying-glass absolute left-4 text-slate-400 text-xl"></i>
+                <input type="text" id="stockSearch" oninput="renderStock()" placeholder="ค้นหารหัส หรือ ชื่อพระ..." class="w-full bg-white border border-slate-200 rounded-[20px] pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-4 focus:ring-yellow-400/10 shadow-sm transition-all"/>
             </div>
 
             <div id="stockContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]"></div>
         </div>
 
         <!-- Bottom Navigation -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40 pb-safe">
             <div class="max-w-sm mx-auto flex justify-between items-center h-20 px-8 relative">
-                <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-velvet-main w-20 transition-colors group"><i class="ph-bold ph-book-open text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">บัญชี</span></button>
+                <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-[#7a1019] w-20 transition-all group"><i class="ph-fill ph-book-bookmark text-3xl mb-1 group-hover:-translate-y-1 transition-transform drop-shadow-sm"></i><span class="text-[11px] font-bold tracking-wide">บัญชี</span></button>
                 
                 <div class="relative -top-6 shrink-0 z-50">
-                    <button onclick="openContextAddModal()" class="w-[72px] h-[72px] bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(245,158,11,0.4)] border-[5px] border-white hover:scale-105 active:scale-95 transition-all"><i class="ph-bold ph-plus text-3xl"></i></button>
+                    <button onclick="openContextAddModal()" class="w-[72px] h-[72px] bg-gradient-to-br from-[#eab308] to-[#a16207] text-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(234,179,8,0.4)] border-[6px] border-white hover:scale-105 active:scale-95 transition-all"><i class="ph-bold ph-plus text-3xl"></i></button>
                 </div>
                 
-                <button id="navTab_stock" onclick="switchTab('stock')" class="flex flex-col items-center justify-center text-slate-400 hover:text-amber-700 w-20 transition-colors group"><i class="ph-bold ph-grid-four text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">ตู้พระ</span></button>
+                <button id="navTab_stock" onclick="switchTab('stock')" class="flex flex-col items-center justify-center text-slate-400 hover:text-[#a16207] w-20 transition-all group"><i class="ph-fill ph-grid-four text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-[11px] font-bold tracking-wide">ตู้พระ</span></button>
             </div>
         </nav>
     </div> <!-- ปิด Main App Container -->
 
     <!-- === Modals === -->
     
+    <!-- Export CSV Modal -->
+    <div id="exportCsvModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative border-t-8 border-emerald-500 shadow-2xl">
+            <button onclick="closeExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold heading-font text-slate-800 mb-2 flex items-center gap-2.5"><i class="ph-fill ph-file-csv text-emerald-500 text-3xl"></i> ดึงรายงาน Excel</h3>
+            <p class="text-sm text-slate-500 mb-6">เลือกช่วงวันที่ต้องการสรุปบัญชี</p>
+            
+            <form onsubmit="handleExportCsv(event)" class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5"><i class="ph-bold ph-calendar-check text-emerald-500"></i> เริ่มต้นวันที่</label>
+                        <input type="date" id="exportStartDate" required class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5"><i class="ph-bold ph-calendar-check text-rose-500"></i> ถึงวันที่</label>
+                        <input type="date" id="exportEndDate" required class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl mt-4 shadow-lg shadow-emerald-500/30 transition-all flex justify-center items-center gap-2">
+                    <i class="ph-bold ph-download-simple text-xl"></i> ดาวน์โหลดไฟล์ CSV
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Add Transaction Modal -->
-    <div id="addModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-bold ph-plus-circle text-velvet-main text-2xl"></i> บันทึกรับ/จ่าย</h3>
+    <div id="addModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-plus-circle text-[#7a1019] text-3xl"></i> บันทึกรับ/จ่าย</h3>
             <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-bold text-slate-500 mb-1.5">ชื่อรายการ (หรือเลือกพิมพ์พระ)</label>
+                    <label class="block font-bold text-slate-600 mb-1.5">ชื่อรายการ (หรือเลือกพิมพ์พระ)</label>
                     <div class="flex gap-2">
-                        <input type="text" id="formDesc" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-velvet-main">
-                        <button type="button" onclick="openDirectoryForPicking()" class="shrink-0 bg-amber-50 text-amber-700 border border-amber-200 px-3 rounded-xl font-bold"><i class="ph-bold ph-books"></i> เลือกพิมพ์</button>
+                        <input type="text" id="formDesc" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#7a1019] outline-none">
+                        <button type="button" onclick="openDirectoryForPicking()" class="shrink-0 bg-amber-50 text-amber-700 border border-amber-200 px-3 rounded-xl font-bold hover:bg-amber-100 transition-colors"><i class="ph-bold ph-books"></i> เลือกพิมพ์</button>
                     </div>
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-500 mb-1.5">ประเภทรายการ</label>
-                    <select id="formCategory" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-velvet-main">
+                    <label class="block font-bold text-slate-600 mb-1.5">ประเภทรายการ</label>
+                    <select id="formCategory" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#7a1019] outline-none bg-white">
                         <option value="SELL">ปล่อยเช่าพระ (รายรับ)</option>
                         <option value="BUY">เช่าเข้าพระ (รายจ่าย)</option>
                         <option value="OTHER_INCOME">รายรับอื่นๆ</option>
@@ -218,237 +275,242 @@
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">รับ/จ่าย (บาท)</label><input type="number" id="formAmount" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:border-velvet-main"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ราคาทุน <span class="text-[10px]">(กรณีขาย)</span></label><input type="number" id="formCost" required min="0" value="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:border-velvet-main text-rose-600"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">รับ/จ่าย (บาท)</label><input type="number" id="formAmount" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:border-[#7a1019] outline-none"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ราคาทุน <span class="text-[10px] font-normal">(กรณีขาย)</span></label><input type="number" id="formCost" required min="0" value="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold focus:border-[#7a1019] outline-none text-rose-600 bg-rose-50"></div>
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-500 mb-1.5">ช่องทางชำระ</label>
+                    <label class="block font-bold text-slate-600 mb-2">ช่องทางชำระ</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" id="btnWalletTransfer" onclick="selectWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5"><i class="ph ph-credit-card text-lg"></i> โอน</button>
-                        <button type="button" id="btnWalletCash" onclick="selectWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5"><i class="ph ph-coins text-lg"></i> เงินสด</button>
+                        <button type="button" id="btnWalletTransfer" onclick="selectWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-credit-card text-lg"></i> โอน</button>
+                        <button type="button" id="btnWalletCash" onclick="selectWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-coins text-lg"></i> เงินสด</button>
                     </div>
                 </div>
-                <button type="submit" id="btnSubmitTx" class="w-full bg-velvet-main text-white font-bold py-4 rounded-xl mt-2">บันทึกข้อมูล</button>
+                <button type="submit" id="btnSubmitTx" class="w-full bg-gradient-to-r from-[#7a1019] to-[#9b1b25] text-white font-bold py-4 rounded-xl mt-4 shadow-lg hover:shadow-xl transition-all text-base">บันทึกข้อมูล</button>
             </form>
         </div>
     </div>
 
     <!-- Add Stock Modal -->
-    <div id="addStockModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAddStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-bold ph-package text-amber-600 text-2xl"></i> เพิ่มพระเข้าตู้</h3>
+    <div id="addStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-package text-[#a16207] text-3xl"></i> เพิ่มพระเข้าตู้</h3>
             <form id="stockForm" onsubmit="handleManualStockSubmit(event)" class="space-y-4 text-sm">
-                <div><label class="block font-bold text-slate-500 mb-1.5">อัปโหลดรูป</label><input type="file" id="stockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2"></div>
+                <div><label class="block font-bold text-slate-600 mb-1.5">อัปโหลดรูป</label><input type="file" id="stockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2 bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">รหัสพระ</label><input type="text" id="stockCode" required class="w-full border border-slate-200 rounded-xl px-4 py-3 uppercase"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">หมวดหมู่</label><input type="text" id="stockCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">รหัสพระ</label><input type="text" id="stockCode" required class="w-full border border-slate-200 rounded-xl px-4 py-3 uppercase focus:border-[#a16207] outline-none"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">หมวดหมู่</label><input type="text" id="stockCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 </div>
-                <div><label class="block font-bold text-slate-500 mb-1.5">ชื่อพระเครื่อง</label><input type="text" id="stockName" required class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
+                <div><label class="block font-bold text-slate-600 mb-1.5">ชื่อพระเครื่อง</label><input type="text" id="stockName" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ราคาทุน</label><input type="number" id="stockCost" required min="0" value="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-rose-600"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ราคาเปิดเช่า</label><input type="number" id="stockPrice" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-emerald-600"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ราคาทุน</label><input type="number" id="stockCost" required min="0" value="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-rose-600 bg-rose-50 focus:border-[#a16207] outline-none font-bold"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ราคาเปิดเช่า</label><input type="number" id="stockPrice" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-emerald-600 bg-emerald-50 focus:border-[#a16207] outline-none font-bold"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ชื่อลูกค้า (ถ้ามี)</label><input type="text" id="stockCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">เบอร์โทร</label><input type="tel" id="stockCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ชื่อลูกค้า (ถ้ามี)</label><input type="text" id="stockCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">เบอร์โทร</label><input type="tel" id="stockCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 </div>
-                <button type="submit" id="btnSubmitStock" class="w-full bg-amber-600 text-white font-bold py-4 rounded-xl mt-2">บันทึกเข้าตู้พระ</button>
+                <button type="submit" id="btnSubmitStock" class="w-full bg-gradient-to-r from-[#d97706] to-[#a16207] text-white font-bold py-4 rounded-xl mt-4 shadow-lg hover:shadow-xl transition-all text-base">บันทึกเข้าตู้พระ</button>
             </form>
         </div>
     </div>
 
     <!-- Edit Stock Modal -->
-    <div id="editStockModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeEditStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-bold ph-pencil-simple text-amber-600 text-2xl"></i> แก้ไขข้อมูลพระ</h3>
+    <div id="editStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-pencil-simple text-[#a16207] text-3xl"></i> แก้ไขข้อมูลพระ</h3>
             <form id="editStockForm" onsubmit="handleEditStockSubmit(event)" class="space-y-4 text-sm">
                 <input type="hidden" id="editStockId"><input type="hidden" id="editStockOldImage"><input type="hidden" id="editStockOldPrice"><input type="hidden" id="editStockOldCost">
-                <div><label class="block font-bold text-slate-500 mb-1.5">เปลี่ยนรูปภาพ (เว้นว่างถ้าไม่เปลี่ยน)</label><input type="file" id="editStockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2"></div>
+                <div><label class="block font-bold text-slate-600 mb-1.5">เปลี่ยนรูปภาพ (เว้นว่างถ้าไม่เปลี่ยน)</label><input type="file" id="editStockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2 bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">รหัสพระ</label><input type="text" id="editStockCode" disabled class="w-full border border-slate-200 rounded-xl px-4 py-3 bg-slate-100"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">หมวดหมู่</label><input type="text" id="editStockCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-amber-500"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">รหัสพระ</label><input type="text" id="editStockCode" disabled class="w-full border border-slate-200 rounded-xl px-4 py-3 bg-slate-100 font-bold text-slate-500"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">หมวดหมู่</label><input type="text" id="editStockCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 </div>
-                <div><label class="block font-bold text-slate-500 mb-1.5">ชื่อพระเครื่อง</label><input type="text" id="editStockName" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-amber-500"></div>
+                <div><label class="block font-bold text-slate-600 mb-1.5">ชื่อพระเครื่อง</label><input type="text" id="editStockName" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ราคาทุน</label><input type="number" id="editStockCost" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold text-rose-600 focus:border-amber-500"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ราคาเปิดเช่า</label><input type="number" id="editStockPrice" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-semibold text-emerald-600 focus:border-amber-500"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ราคาทุน</label><input type="number" id="editStockCost" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-bold text-rose-600 bg-rose-50 focus:border-[#a16207] outline-none"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ราคาเปิดเช่า</label><input type="number" id="editStockPrice" required min="0" class="w-full border border-slate-200 rounded-xl px-4 py-3 font-bold text-emerald-600 bg-emerald-50 focus:border-[#a16207] outline-none"></div>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 mb-1.5">หมายเหตุ / บันทึกประวัติ (Remark)</label>
-                    <textarea id="editStockRemark" rows="3" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-amber-500 resize-none"></textarea>
+                    <label class="block font-bold text-slate-600 mb-1.5">หมายเหตุ / บันทึกประวัติ (Remark)</label>
+                    <textarea id="editStockRemark" rows="3" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none resize-none"></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                    <div><label class="block font-bold text-slate-500 mb-1.5">ชื่อลูกค้า</label><input type="text" id="editCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-amber-500"></div>
-                    <div><label class="block font-bold text-slate-500 mb-1.5">เบอร์โทร</label><input type="tel" id="editCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-amber-500"></div>
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ชื่อลูกค้า</label><input type="text" id="editCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">เบอร์โทร</label><input type="tel" id="editCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
                 </div>
-                <button type="submit" id="btnSubmitEditStock" class="w-full bg-amber-600 text-white font-bold py-4 rounded-xl mt-2">บันทึกการแก้ไข</button>
+                <button type="submit" id="btnSubmitEditStock" class="w-full bg-gradient-to-r from-[#d97706] to-[#a16207] text-white font-bold py-4 rounded-xl mt-4 shadow-lg hover:shadow-xl transition-all text-base">บันทึกการแก้ไข</button>
             </form>
         </div>
     </div>
 
     <!-- Sell Stock Modal -->
-    <div id="sellStockModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 relative max-h-[95vh] overflow-y-auto">
-            <button onclick="closeSellStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-xl font-bold heading-font text-slate-800 mb-1 flex items-center gap-2"><i class="ph-bold ph-handshake text-emerald-600"></i> ทำรายการเช่า</h3>
-            <p id="sellStockName" class="text-sm font-semibold text-slate-500 mb-4 pb-3 border-b border-slate-100"></p>
+    <div id="sellStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[95vh] overflow-y-auto border-t-8 border-emerald-500">
+            <button onclick="closeSellStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold heading-font text-slate-800 mb-1 flex items-center gap-2"><i class="ph-fill ph-handshake text-emerald-500 text-3xl"></i> ทำรายการเช่า</h3>
+            <p id="sellStockName" class="text-sm font-semibold text-slate-500 mb-5 pb-3 border-b border-slate-100"></p>
             <form id="sellStockForm" onsubmit="handleSellStockSubmit(event)" class="space-y-4 text-sm">
                 <input type="hidden" id="sellStockId"><input type="hidden" id="sellStockCost">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold text-slate-600 mb-1">ชื่อลูกค้า</label><input type="text" id="sellCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
-                    <div><label class="block font-bold text-slate-600 mb-1">เบอร์โทร</label><input type="tel" id="sellCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">ชื่อลูกค้า</label><input type="text" id="sellCustomerName" class="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-emerald-500"></div>
+                    <div><label class="block font-bold text-slate-600 mb-1.5">เบอร์โทร</label><input type="tel" id="sellCustomerPhone" class="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-emerald-500"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><label class="block text-xs font-bold text-slate-500 mb-1">ราคาตกลงขาย</label><input type="number" id="sellAgreedPrice" required min="1" class="w-full bg-transparent text-lg font-bold text-slate-800 focus:outline-none border-b border-slate-300 pb-1"></div>
-                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200"><label class="block text-xs font-bold text-emerald-700 mb-1">ยอดเงินรับจริง</label><input type="number" id="sellStockAmount" required min="1" class="w-full bg-transparent text-lg font-bold text-emerald-700 focus:outline-none border-b border-emerald-300 pb-1"></div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200"><label class="block text-xs font-bold text-slate-500 mb-1">ราคาตกลงขาย</label><input type="number" id="sellAgreedPrice" required min="1" class="w-full bg-transparent text-xl font-bold text-slate-800 focus:outline-none border-b-2 border-slate-300 focus:border-slate-500 pb-1"></div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200"><label class="block text-xs font-bold text-emerald-700 mb-1">ยอดเงินรับจริง</label><input type="number" id="sellStockAmount" required min="1" class="w-full bg-transparent text-xl font-bold text-emerald-700 focus:outline-none border-b-2 border-emerald-300 focus:border-emerald-500 pb-1"></div>
                 </div>
-                <p id="sellStatusWarning" class="text-xs font-bold text-amber-600 bg-amber-50 p-2 rounded-lg hidden"><i class="ph-fill ph-warning-circle"></i> รับเงินไม่ครบ ระบบจะบันทึกเป็นติดจอง/ผ่อน</p>
+                <p id="sellStatusWarning" class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-xl hidden flex items-center gap-2"><i class="ph-fill ph-warning-circle text-lg"></i> รับเงินไม่ครบ ระบบจะบันทึกเป็นมัดจำ</p>
                 <div>
                     <label class="block font-bold text-slate-600 mb-2">ช่องทางรับเงิน</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" id="btnSellStockTransfer" onclick="selectSellStockWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5"><i class="ph ph-credit-card"></i> โอน</button>
-                        <button type="button" id="btnSellStockCash" onclick="selectSellStockWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5"><i class="ph ph-coins"></i> เงินสด</button>
+                        <button type="button" id="btnSellStockTransfer" onclick="selectSellStockWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-credit-card text-lg"></i> โอน</button>
+                        <button type="button" id="btnSellStockCash" onclick="selectSellStockWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-coins text-lg"></i> เงินสด</button>
                     </div>
                 </div>
-                <button type="submit" id="btnSubmitSellStock" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl mt-2"><i class="ph-bold ph-check"></i> ยืนยันรับเงิน</button>
+                <button type="submit" id="btnSubmitSellStock" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl mt-4 shadow-lg hover:shadow-xl hover:bg-emerald-600 transition-all text-base flex justify-center items-center gap-2"><i class="ph-bold ph-check text-xl"></i> ยืนยันรับเงิน</button>
             </form>
         </div>
     </div>
 
     <!-- Buy Back Modal -->
-    <div id="buyBackModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative border-t-8 border-blue-500 shadow-2xl">
-            <button onclick="closeBuyBackModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-bold ph-arrows-left-right text-blue-500 text-2xl"></i> รับเช่าคืน</h3>
-            <p id="bbAmuletName" class="text-sm font-semibold text-slate-500 mb-4 pb-3 border-b border-slate-100"></p>
+    <div id="buyBackModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative border-t-8 border-blue-500 shadow-2xl">
+            <button onclick="closeBuyBackModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2"><i class="ph-fill ph-arrows-left-right text-blue-500 text-3xl"></i> รับเช่าคืน</h3>
+            <p id="bbAmuletName" class="text-sm font-semibold text-slate-500 mb-5 pb-3 border-b border-slate-100"></p>
             <form onsubmit="handleBuyBackSubmit(event)" class="space-y-4">
                 <input type="hidden" id="bbStockId">
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
-                        <label class="block text-xs font-bold text-blue-700 mb-1">ราคารับซื้อคืน (ต้นทุน)</label>
-                        <input type="number" id="bbCost" required min="0" class="w-full bg-transparent text-lg font-bold text-blue-800 focus:outline-none border-b border-blue-300 pb-1">
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                        <label class="block text-xs font-bold text-blue-700 mb-1">ราคารับซื้อคืน (ทุน)</label>
+                        <input type="number" id="bbCost" required min="0" class="w-full bg-transparent text-xl font-bold text-blue-800 focus:outline-none border-b-2 border-blue-300 focus:border-blue-500 pb-1">
                     </div>
-                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
-                        <label class="block text-xs font-bold text-emerald-700 mb-1">ตั้งราคาเปิดใหม่</label>
-                        <input type="number" id="bbPrice" required min="0" class="w-full bg-transparent text-lg font-bold text-emerald-800 focus:outline-none border-b border-emerald-300 pb-1">
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                        <label class="block text-xs font-bold text-amber-700 mb-1">ตั้งราคาเปิดใหม่</label>
+                        <input type="number" id="bbPrice" required min="0" class="w-full bg-transparent text-xl font-bold text-amber-800 focus:outline-none border-b-2 border-amber-300 focus:border-amber-500 pb-1">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-600 mb-2">ช่องทางจ่ายเงิน</label>
+                    <label class="block text-sm font-bold text-slate-600 mb-2 mt-2">ช่องทางจ่ายเงิน</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button" id="btnBbTransfer" onclick="selectBbWallet('TRANSFER')" class="py-2.5 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5"><i class="ph ph-credit-card"></i> โอน</button>
-                        <button type="button" id="btnBbCash" onclick="selectBbWallet('CASH')" class="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5"><i class="ph ph-coins"></i> เงินสด</button>
+                        <button type="button" id="btnBbTransfer" onclick="selectBbWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-credit-card text-lg"></i> โอน</button>
+                        <button type="button" id="btnBbCash" onclick="selectBbWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center gap-1.5 transition-all"><i class="ph-bold ph-coins text-lg"></i> เงินสด</button>
                     </div>
                 </div>
-                <button type="submit" id="btnSubmitBb" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl mt-2 transition-colors">ยืนยันทำรายการ</button>
+                <button type="submit" id="btnSubmitBb" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl mt-4 shadow-lg transition-all text-base">ยืนยันทำรายการ</button>
             </form>
         </div>
     </div>
 
     <!-- Ledger Installment Modal -->
-    <div id="amuletLedgerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[55] flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="bg-slate-900 p-5 relative shrink-0">
-                <button onclick="closeAmuletLedgerModal()" class="absolute top-4 right-4 text-slate-300 hover:text-white bg-white/10 p-2 rounded-full"><i class="ph ph-x"></i></button>
-                <h3 class="text-xl font-bold heading-font text-white flex items-center gap-2"><i class="ph-bold ph-folder-open text-amber-400"></i> แฟ้มประวัติ / ค่างวด</h3>
-                <p id="ledgerAmuletName" class="text-sm text-slate-300 mt-1 truncate"></p>
-                <p id="ledgerCustomer" class="text-xs text-slate-400 mt-0.5"></p>
-                <div class="grid grid-cols-3 gap-2 mt-4 text-center">
-                    <div class="bg-white/10 rounded-lg p-2"><p class="text-[10px] text-slate-400 mb-0.5">ตกลงขาย</p><p id="ledgerTotalPrice" class="font-bold text-white text-sm">0</p></div>
-                    <div class="bg-emerald-500/20 rounded-lg p-2 border border-emerald-500/30"><p class="text-[10px] text-emerald-300 mb-0.5">ชำระแล้ว</p><p id="ledgerPaidAmount" class="font-bold text-emerald-400 text-sm">0</p></div>
-                    <div class="bg-rose-500/20 rounded-lg p-2 border border-rose-500/30"><p class="text-[10px] text-rose-300 mb-0.5">ยอดคงเหลือ</p><p id="ledgerRemainAmount" class="font-bold text-rose-400 text-sm">0</p></div>
+    <div id="amuletLedgerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[75] flex items-center justify-center p-4 hidden animate-in fade-in">
+        <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 p-6 relative shrink-0 border-b-4 border-[#eab308]">
+                <button onclick="closeAmuletLedgerModal()" class="absolute top-4 right-4 text-slate-300 hover:text-white bg-white/10 p-2 rounded-full transition-colors"><i class="ph-bold ph-x"></i></button>
+                <h3 class="text-xl font-bold heading-font text-white flex items-center gap-2"><i class="ph-fill ph-folder-open text-[#eab308] text-3xl"></i> แฟ้มประวัติ / ค่างวด</h3>
+                <p id="ledgerAmuletName" class="text-sm text-slate-300 mt-2 truncate font-medium"></p>
+                <p id="ledgerCustomer" class="text-xs text-slate-400 mt-1"></p>
+                <div class="grid grid-cols-3 gap-2 mt-5 text-center">
+                    <div class="bg-white/10 rounded-xl p-3"><p class="text-[10px] text-slate-400 mb-1">ตกลงขาย</p><p id="ledgerTotalPrice" class="font-bold text-white text-base">0</p></div>
+                    <div class="bg-emerald-500/20 rounded-xl p-3 border border-emerald-500/30"><p class="text-[10px] text-emerald-300 mb-1">ชำระแล้ว</p><p id="ledgerPaidAmount" class="font-bold text-emerald-400 text-base">0</p></div>
+                    <div class="bg-rose-500/20 rounded-xl p-3 border border-rose-500/30"><p class="text-[10px] text-rose-300 mb-1">ยอดคงเหลือ</p><p id="ledgerRemainAmount" class="font-bold text-rose-400 text-base">0</p></div>
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-5 bg-slate-50"><h4 class="font-bold text-slate-700 text-sm mb-3">ประวัติการชำระเงิน</h4><div id="ledgerHistoryList" class="space-y-3"></div></div>
-            <div id="ledgerActionArea" class="p-5 border-t border-slate-200 bg-white shrink-0"></div>
+            <div class="flex-1 overflow-y-auto p-6 bg-slate-50"><h4 class="font-bold text-slate-700 text-sm mb-4 flex items-center gap-2"><i class="ph-bold ph-clock-counter-clockwise"></i> ประวัติการชำระเงิน</h4><div id="ledgerHistoryList" class="space-y-3"></div></div>
+            <div id="ledgerActionArea" class="p-6 border-t border-slate-200 bg-white shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]"></div>
         </div>
     </div>
 
     <!-- Pay Installment Modal -->
-    <div id="payInstallmentModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative border border-emerald-500/20 shadow-2xl">
-            <button onclick="closePayInstallmentModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-bold ph-coins text-emerald-500 text-2xl"></i> รับค่างวดเพิ่ม</h3>
+    <div id="payInstallmentModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative border-t-8 border-emerald-500 shadow-2xl">
+            <button onclick="closePayInstallmentModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
+            <h3 class="text-xl font-bold text-slate-800 mb-5 flex items-center gap-2"><i class="ph-fill ph-coins text-emerald-500 text-3xl"></i> รับค่างวดเพิ่ม</h3>
             <form onsubmit="submitPayInstallment(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">อัปเดตชื่อลูกค้า</label><input type="text" id="payInstCustName" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">เบอร์โทรติดต่อ</label><input type="text" id="payInstCustPhone" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1.5">อัปเดตชื่อลูกค้า</label><input type="text" id="payInstCustName" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500 outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1.5">เบอร์โทรติดต่อ</label><input type="text" id="payInstCustPhone" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-emerald-500 outline-none"></div>
                 </div>
-                <div><label class="block text-sm font-bold text-slate-600 mb-1 text-center">ยอดรับชำระงวดนี้</label><input type="number" id="payInstAmount" required min="1" class="w-full border-2 border-emerald-200 bg-emerald-50 text-emerald-700 rounded-2xl px-4 py-3 text-xl text-center font-bold"><p id="payInstRemainText" class="text-xs text-center text-rose-500 font-medium mt-1"></p></div>
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button type="button" id="btnInstTransfer" onclick="selectInstWallet('TRANSFER')" class="py-2.5 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold"><i class="ph ph-credit-card text-lg"></i> โอน</button>
-                    <button type="button" id="btnInstCash" onclick="selectInstWallet('CASH')" class="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold"><i class="ph ph-coins text-lg"></i> เงินสด</button>
+                <div class="mt-4"><label class="block text-sm font-bold text-slate-600 mb-2 text-center">ยอดรับชำระงวดนี้</label><input type="number" id="payInstAmount" required min="1" class="w-full border-2 border-emerald-200 bg-emerald-50 text-emerald-700 rounded-2xl px-4 py-4 text-2xl text-center font-bold outline-none focus:border-emerald-500"><p id="payInstRemainText" class="text-xs text-center text-rose-500 font-bold mt-2 bg-rose-50 py-1.5 rounded-lg border border-rose-100"></p></div>
+                <div class="grid grid-cols-2 gap-3 pt-3">
+                    <button type="button" id="btnInstTransfer" onclick="selectInstWallet('TRANSFER')" class="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold transition-all flex justify-center gap-1.5"><i class="ph-bold ph-credit-card text-lg"></i> โอน</button>
+                    <button type="button" id="btnInstCash" onclick="selectInstWallet('CASH')" class="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold transition-all flex justify-center gap-1.5"><i class="ph-bold ph-coins text-lg"></i> เงินสด</button>
                 </div>
-                <button type="submit" id="btnSubmitInst" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl mt-2">ยืนยันรับค่างวด</button>
+                <button type="submit" id="btnSubmitInst" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl mt-4 shadow-lg transition-all text-base">ยืนยันรับค่างวด</button>
             </form>
         </div>
     </div>
 
     <!-- Image Viewer Modal -->
-    <div id="imageViewerModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[80] flex items-center justify-center p-4 hidden animate-in fade-in" onclick="closeImageViewer()">
-        <div class="relative max-w-sm w-full bg-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
-            <button onclick="closeImageViewer()" class="absolute top-4 right-4 z-10 bg-slate-700/50 hover:bg-slate-700 text-white p-2 rounded-full transition-all"><i class="ph-bold ph-x text-xl"></i></button>
-            <div class="w-full bg-black/50 flex items-center justify-center p-4 min-h-[250px]">
-                <img id="viewerImageSrc" src="" class="max-w-full max-h-[40vh] object-contain rounded-xl border-2 border-white/10" alt="ภาพขยาย">
+    <div id="imageViewerModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden animate-in fade-in" onclick="closeImageViewer()">
+        <div class="relative max-w-sm w-full bg-slate-800 rounded-[32px] overflow-hidden shadow-2xl flex flex-col border border-slate-700" onclick="event.stopPropagation()">
+            <button onclick="closeImageViewer()" class="absolute top-4 right-4 z-10 bg-slate-700/80 backdrop-blur hover:bg-slate-600 text-white p-2.5 rounded-full transition-all shadow-lg"><i class="ph-bold ph-x text-xl"></i></button>
+            <div class="w-full bg-black flex items-center justify-center p-6 min-h-[300px]">
+                <img id="viewerImageSrc" src="" class="max-w-full max-h-[45vh] object-contain rounded-2xl shadow-2xl" alt="ภาพขยาย">
             </div>
-            <div class="w-full bg-slate-50 p-5 flex flex-col overflow-y-auto max-h-[50vh]">
-                <div class="mb-3 flex items-center gap-2"><span id="viewerCode" class="bg-amber-500 font-bold px-3 py-1 rounded-full text-xs"></span><span id="viewerCategory" class="text-slate-500 text-xs font-medium bg-slate-200 px-3 py-1 rounded-full"></span></div>
-                <h3 id="viewerName" class="text-lg font-bold text-slate-800 mb-2"></h3>
+            <div class="w-full bg-white p-6 flex flex-col overflow-y-auto max-h-[45vh]">
+                <div class="mb-3 flex items-center gap-2"><span id="viewerCode" class="bg-amber-100 text-amber-800 border border-amber-200 font-bold px-3 py-1 rounded-full text-xs"></span><span id="viewerCategory" class="text-slate-500 text-xs font-medium bg-slate-100 border border-slate-200 px-3 py-1 rounded-full"></span></div>
+                <h3 id="viewerName" class="text-xl font-bold heading-font text-slate-800 mb-4"></h3>
                 
-                <div id="viewerRemarkContainer" class="mb-4 hidden bg-amber-50/50 p-3 rounded-xl border border-amber-100/50">
-                    <p class="text-[11px] font-bold text-amber-600 mb-1 flex items-center gap-1"><i class="ph-bold ph-file-text"></i> บันทึกหมายเหตุ</p>
-                    <p id="viewerRemarkText" class="text-xs text-slate-600 whitespace-pre-wrap"></p>
+                <div id="viewerRemarkContainer" class="mb-4 hidden bg-amber-50/80 p-4 rounded-2xl border border-amber-200/60 shadow-sm">
+                    <p class="text-xs font-bold text-amber-700 mb-1.5 flex items-center gap-1.5"><i class="ph-bold ph-file-text text-base"></i> บันทึกหมายเหตุ</p>
+                    <p id="viewerRemarkText" class="text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed"></p>
                 </div>
 
-                <div id="viewerTradingHistoryContainer" class="mb-4 hidden pb-4 border-b border-slate-200/50">
-                    <p class="text-[11px] font-bold text-slate-400 mb-2 flex items-center gap-1"><i class="ph-bold ph-arrows-left-right"></i> ประวัติการเปลี่ยนมือ</p>
-                    <div id="viewerTradingHistoryList" class="space-y-2 max-h-32 overflow-y-auto pr-1 hide-scrollbar"></div>
+                <div id="viewerTradingHistoryContainer" class="mb-4 hidden pb-5 border-b border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 mb-3 flex items-center gap-1.5"><i class="ph-bold ph-arrows-left-right text-base"></i> ประวัติการเปลี่ยนมือ</p>
+                    <div id="viewerTradingHistoryList" class="space-y-2.5 max-h-40 overflow-y-auto pr-2 hide-scrollbar"></div>
                 </div>
 
-                <div id="viewerCurrentStatus" class="mb-4 hidden pb-4 border-b border-slate-200/50">
-                     <p class="text-[11px] font-bold text-slate-400 mb-1">สถานะปัจจุบัน: ติดจอง/มัดจำ</p>
-                     <p class="text-sm font-medium text-slate-700 flex items-center gap-1.5"><i class="ph-fill ph-user text-slate-400"></i> <span id="viewerCurrentCustomer">-</span></p>
-                     <p class="text-sm font-medium text-slate-700 flex items-center gap-1.5 mt-0.5"><i class="ph-fill ph-phone text-slate-400"></i> <span id="viewerCurrentPhone">-</span></p>
+                <div id="viewerCurrentStatus" class="mb-4 hidden pb-5 border-b border-slate-100">
+                     <p class="text-[11px] font-bold text-amber-500 mb-1.5 uppercase tracking-wide"><i class="ph-fill ph-clock"></i> สถานะปัจจุบัน: ติดจอง/มัดจำ</p>
+                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                         <p class="text-sm font-bold text-slate-700 flex items-center gap-2"><i class="ph-fill ph-user text-slate-400 text-lg"></i> <span id="viewerCurrentCustomer">-</span></p>
+                         <p class="text-sm font-bold text-slate-700 flex items-center gap-2 mt-1"><i class="ph-fill ph-phone text-slate-400 text-lg"></i> <span id="viewerCurrentPhone">-</span></p>
+                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-white p-3 rounded-2xl border border-slate-200"><p class="text-xs text-slate-500 mb-1">ราคาเปิดเช่า</p><p id="viewerPrice" class="text-lg font-bold text-emerald-600"></p></div>
-                    <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200"><p class="text-xs text-rose-500 mb-1">ราคาทุน</p><p id="viewerCost" class="text-lg font-bold text-rose-700"></p></div>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100"><p class="text-xs font-bold text-emerald-600/70 mb-1">ราคาเปิดเช่า</p><p id="viewerPrice" class="text-xl font-bold text-emerald-600"></p></div>
+                    <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100"><p class="text-xs font-bold text-rose-600/70 mb-1">ราคาทุน</p><p id="viewerCost" class="text-xl font-bold text-rose-600"></p></div>
                 </div>
                 
-                <div id="viewerPriceHistoryContainer" class="hidden mt-4 pt-4 border-t border-slate-200/50"><p class="text-xs font-bold text-slate-500 mb-2">ประวัติการปรับราคา</p><div id="viewerPriceHistoryList" class="space-y-2 max-h-32 overflow-y-auto text-sm"></div></div>
+                <div id="viewerPriceHistoryContainer" class="hidden mt-5 pt-5 border-t border-slate-100"><p class="text-xs font-bold text-slate-400 mb-3 flex items-center gap-1.5"><i class="ph-bold ph-clock-counter-clockwise"></i> ประวัติการปรับราคา</p><div id="viewerPriceHistoryList" class="space-y-2.5 max-h-32 overflow-y-auto text-sm pr-2"></div></div>
             </div>
         </div>
     </div>
 
     <!-- Directory Modal -->
-    <div id="directoryModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[85] flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative overflow-hidden flex flex-col max-h-[85vh]">
-            <button onclick="closeDirectoryModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph ph-x"></i></button>
-            <div class="mb-5 flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-yellow-100 text-gold-dark rounded-2xl flex items-center justify-center"><i class="ph-bold ph-books text-2xl"></i></div><div><h3 class="text-xl font-bold heading-font">ทำเนียบพระ</h3></div></div><button onclick="openAddDirModal()" class="bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1"><i class="ph-bold ph-plus"></i> เพิ่มพิมพ์</button></div>
-            <input type="text" id="directorySearch" oninput="renderDirectory(this.value)" placeholder="ค้นหาหมวดหมู่ หรือ ชื่อพิมพ์..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm mb-4 outline-none"/>
-            <div id="directoryContent" class="flex-1 overflow-y-auto space-y-4 pr-1"></div>
+    <div id="directoryModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden animate-in fade-in">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
+            <button onclick="closeDirectoryModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"><i class="ph-bold ph-x"></i></button>
+            <div class="mb-6 flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-14 h-14 bg-gradient-to-br from-yellow-100 to-amber-100 text-[#a16207] rounded-2xl flex items-center justify-center shadow-sm border border-amber-200"><i class="ph-fill ph-books text-3xl"></i></div><div><h3 class="text-2xl font-bold heading-font text-slate-800">ทำเนียบพระ</h3></div></div><button onclick="openAddDirModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1 transition-colors shadow-md"><i class="ph-bold ph-plus text-base"></i> เพิ่มพิมพ์</button></div>
+            <div class="relative mb-5">
+                <i class="ph-bold ph-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                <input type="text" id="directorySearch" oninput="renderDirectory(this.value)" placeholder="ค้นหาหมวดหมู่ หรือ ชื่อพิมพ์..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none focus:border-[#a16207] focus:ring-2 focus:ring-amber-500/10 transition-all"/>
+            </div>
+            <div id="directoryContent" class="flex-1 overflow-y-auto space-y-5 pr-2 hide-scrollbar"></div>
         </div>
     </div>
     
     <!-- Add Directory Modal -->
-    <div id="addDirModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative"><h3 class="text-lg font-bold mb-4">เพิ่มพิมพ์พระ</h3><form onsubmit="handleDirSubmit(event)" class="space-y-4"><input type="hidden" id="dirEditId"><div><label class="block text-sm font-bold text-slate-500 mb-1">หมวดหมู่</label><input type="text" id="dirCategory" required class="w-full border rounded-xl px-4 py-3"></div><div><label class="block text-sm font-bold text-slate-500 mb-1">ชื่อพิมพ์/รุ่น</label><input type="text" id="dirName" required class="w-full border rounded-xl px-4 py-3"></div><div class="flex gap-2"><button type="button" onclick="closeAddDirModal()" class="flex-1 bg-slate-100 font-bold py-3 rounded-xl">ยกเลิก</button><button type="submit" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-xl">บันทึก</button></div></form></div>
+    <div id="addDirModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative shadow-2xl border-t-8 border-slate-900"><h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-book-bookmark text-slate-900 text-3xl"></i> เพิ่มพิมพ์พระ</h3><form onsubmit="handleDirSubmit(event)" class="space-y-4"><input type="hidden" id="dirEditId"><div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3"><div><label class="block text-xs font-bold text-slate-600 mb-1.5">หมวดหมู่</label><input type="text" id="dirCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-slate-500"></div><div><label class="block text-xs font-bold text-slate-600 mb-1.5">ชื่อพิมพ์/รุ่น</label><input type="text" id="dirName" required class="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-slate-500"></div></div><div class="flex gap-3 pt-2"><button type="button" onclick="closeAddDirModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-4 rounded-2xl transition-colors">ยกเลิก</button><button type="submit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-lg transition-all">บันทึกข้อมูล</button></div></form></div>
     </div>
 
     <!-- Alert Modal -->
-    <div id="generalInfoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4 hidden animate-in fade-in">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative text-center shadow-2xl"><div id="infoIconBox"></div><h3 id="infoTitle" class="text-lg font-bold text-slate-800 mb-2"></h3><p id="infoDesc" class="text-sm text-slate-500 mb-6"></p><button onclick="document.getElementById('generalInfoModal').classList.add('hidden')" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl">ตกลง</button></div>
+    <div id="generalInfoModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+        <div class="bg-white w-full max-w-xs rounded-[32px] p-8 relative text-center shadow-2xl border border-white"><div id="infoIconBox"></div><h3 id="infoTitle" class="text-xl font-bold heading-font text-slate-800 mb-2"></h3><p id="infoDesc" class="text-sm text-slate-500 mb-8 leading-relaxed"></p><button onclick="document.getElementById('generalInfoModal').classList.add('hidden')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl transition-all shadow-lg text-base">ตกลง</button></div>
     </div>
 
     <!-- Logic -->
     <script>
-        // ชุดกุญแจที่ถูกต้อง 100%
+        // ชุดกุญแจ Firebase ที่ถูกต้อง 100%
         const firebaseConfig = {
           apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
           authDomain: "baramee-somdej-toh.firebaseapp.com",
@@ -471,15 +533,43 @@
         let currentLedgerAmulet = null, currentInstWallet = 'TRANSFER', currentBbWallet = 'TRANSFER';
         let dbListeners = []; 
 
+        // ----------------------------------------------------
+        // ส่วนควบคุมวันหมดอายุ (แก้ไขวันที่ตรงนี้ได้เลยครับ)
+        // ----------------------------------------------------
+        const EXPIRATION_DATE = '2026-10-17'; // วันที่แอปจะถูกล็อกใช้งานไม่ได้ (ปี-เดือน-วัน)
+
+        function checkExpiration() {
+            const today = new Date();
+            const expDate = new Date(EXPIRATION_DATE);
+            const diffTime = expDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+            if (diffDays <= 0) {
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('expiredScreen').classList.remove('hidden');
+                return false; 
+            } else if (diffDays <= 7) {
+                document.getElementById('expireDaysText').innerText = diffDays;
+                document.getElementById('expirationBanner').classList.remove('hidden');
+                document.getElementById('btnGroupRight').classList.replace('top-6', 'top-14');
+                document.getElementById('btnGroupLeft').classList.replace('top-6', 'top-14');
+            }
+            return true;
+        }
+        // ----------------------------------------------------
+
         // --- ระบบล็อกอิน ---
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('appDatePicker').value = selectedDate;
-                initDatabaseListeners();
+                if (checkExpiration()) {
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('appDatePicker').value = selectedDate;
+                    initDatabaseListeners();
+                }
             } else {
                 document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('expiredScreen').classList.add('hidden');
                 document.getElementById('loginScreen').classList.remove('hidden');
                 
                 dbListeners.forEach(unsubscribe => unsubscribe()); 
@@ -525,11 +615,11 @@
             currentActiveTab = tabId;
             ['ledger', 'stock'].forEach(id => { const ws = document.getElementById(`${id}Workspace`); if(ws) ws.classList.add('hidden'); });
             const targetWs = document.getElementById(`${tabId}Workspace`); if(targetWs) targetWs.classList.remove('hidden');
-            ['ledger', 'stock'].forEach(id => { const el = document.getElementById(`navTab_${id}`); if(el) { el.classList.remove('text-velvet-main', 'text-amber-700'); el.classList.add('text-slate-400'); } });
+            ['ledger', 'stock'].forEach(id => { const el = document.getElementById(`navTab_${id}`); if(el) { el.classList.remove('text-[#7a1019]', 'text-[#a16207]'); el.classList.add('text-slate-400'); } });
             
             const activeEl = document.getElementById(`navTab_${tabId}`);
-            if(tabId === 'ledger') { if(activeEl) activeEl.classList.add('text-velvet-main'); renderAll(); }
-            else if(tabId === 'stock') { if(activeEl) activeEl.classList.add('text-amber-700'); renderStock(); }
+            if(tabId === 'ledger') { if(activeEl) activeEl.classList.add('text-[#7a1019]'); renderAll(); }
+            else if(tabId === 'stock') { if(activeEl) activeEl.classList.add('text-[#a16207]'); renderStock(); }
             window.scrollTo(0,0);
         }
 
@@ -556,17 +646,17 @@
             
             document.getElementById('txCountBadge').innerText = `${list.length} รายการ`;
             const cont = document.getElementById('txContainer');
-            if(!list.length) { cont.innerHTML = `<div class="text-center py-10 bg-white/70 rounded-3xl border border-slate-100 shadow-sm text-slate-400 font-semibold">ไม่มีรายการบัญชีในวันที่เลือก</div>`; return; }
+            if(!list.length) { cont.innerHTML = `<div class="text-center py-12 bg-white rounded-3xl border border-slate-100 shadow-sm text-slate-400 font-bold"><i class="ph-fill ph-receipt text-4xl mb-2 text-slate-200"></i><br>ไม่มีรายการบัญชีในวันที่เลือก</div>`; return; }
             
             const names = {'SELL':'ปล่อยเช่า','BUY':'เช่าเข้า','INSTALLMENT':'ค่างวด/มัดจำ','OTHER_INCOME':'รับอื่นๆ','OTHER_EXPENSE':'จ่ายอื่นๆ'};
             cont.innerHTML = list.map(tx => {
                 const inc = ['SELL','OTHER_INCOME', 'INSTALLMENT'].includes(tx.category);
-                return `<div class="bg-white/95 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between ${inc?'border-l-4 border-emerald-500':'border-l-4 border-rose-500'}"><div><h4 class="font-bold text-slate-800 text-sm md:text-base">${tx.description}</h4><div class="flex items-center gap-2 mt-1 text-[11px]"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${names[tx.category]||tx.category}</span><span class="text-slate-400">${tx.wallet==='CASH'?'เงินสด':'โอน'}</span>${tx.category === 'SELL' && tx.cost > 0 ? `<span class="text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">ทุน ${format(tx.cost)}</span>` : ''}</div></div><div class="text-right shrink-0"><p class="font-bold text-base ${inc?'text-emerald-600':'text-slate-800'}">${inc?'+':'-'}${format(tx.amount)}</p><button onclick="if(confirm('ลบรายการบัญชีนี้?')) getColRef('transactions').doc('${tx.id}').delete()" class="text-slate-300 hover:text-red-500 pt-1"><i class="ph-bold ph-trash text-base"></i></button></div></div>`;
+                return `<div class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between transition-all hover:shadow-md ${inc?'border-l-4 border-l-emerald-500':'border-l-4 border-l-rose-500'}"><div><h4 class="font-bold text-slate-800 text-sm md:text-base mb-1.5">${tx.description}</h4><div class="flex flex-wrap items-center gap-2 text-[10px]"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-bold border border-slate-200 shadow-sm">${names[tx.category]||tx.category}</span><span class="text-slate-500 font-bold flex items-center gap-1">${tx.wallet==='CASH'?'<i class="ph-fill ph-coins"></i> เงินสด':'<i class="ph-fill ph-credit-card"></i> โอน'}</span>${tx.category === 'SELL' && tx.cost > 0 ? `<span class="text-rose-600 bg-rose-50 px-2 py-1 rounded-lg border border-rose-100 font-bold flex items-center gap-1"><i class="ph-bold ph-trend-down"></i> ทุน ${format(tx.cost)}</span>` : ''}</div></div><div class="text-right shrink-0 flex flex-col justify-between h-full"><p class="font-bold text-base md:text-lg tracking-tight ${inc?'text-emerald-600':'text-slate-800'}">${inc?'+':'-'}${format(tx.amount)}</p><button onclick="if(confirm('ยืนยันลบรายการบัญชีนี้?')) getColRef('transactions').doc('${tx.id}').delete()" class="text-slate-300 hover:text-rose-500 mt-2 transition-colors self-end"><i class="ph-bold ph-trash text-lg"></i></button></div></div>`;
             }).join('');
         }
 
         function handleSearch(v) { searchQuery=v; renderAll(); }
-        function selectWallet(t) { currentWallet = t; [...document.querySelectorAll('#btnWalletTransfer, #btnWalletCash')].forEach(el => el.className = el.id.includes(t.charAt(0).toUpperCase()+t.slice(1).toLowerCase()) ? `py-3 rounded-xl border-2 border-${t==='TRANSFER'?'blue':'emerald'}-500 text-${t==='TRANSFER'?'blue':'emerald'}-700 bg-${t==='TRANSFER'?'blue':'emerald'}-50 font-bold flex justify-center items-center gap-1.5` : 'py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5'); }
+        function selectWallet(t) { currentWallet = t; [...document.querySelectorAll('#btnWalletTransfer, #btnWalletCash')].forEach(el => el.className = el.id.includes(t.charAt(0).toUpperCase()+t.slice(1).toLowerCase()) ? `py-3 rounded-xl border-2 border-${t==='TRANSFER'?'blue':'emerald'}-500 text-${t==='TRANSFER'?'blue':'emerald'}-700 bg-${t==='TRANSFER'?'blue':'emerald'}-50 font-bold flex justify-center items-center gap-1.5 transition-all` : 'py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5 transition-all'); }
         function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
         function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); document.getElementById('txForm').reset(); }
 
@@ -586,9 +676,68 @@
             } catch(err) { showCustomAlert("ข้อผิดพลาด", err.message, "error"); } finally { btn.disabled = false; btn.innerText = "บันทึกข้อมูล"; }
         }
 
+        // ----------------------------------------------------
+        // ระบบ Export CSV
+        // ----------------------------------------------------
+        function openExportModal() {
+            document.getElementById('exportStartDate').value = selectedDate; 
+            document.getElementById('exportEndDate').value = selectedDate;
+            document.getElementById('exportCsvModal').classList.remove('hidden');
+        }
+        
+        function closeExportModal() { document.getElementById('exportCsvModal').classList.add('hidden'); }
+
+        function handleExportCsv(e) {
+            e.preventDefault();
+            const start = document.getElementById('exportStartDate').value;
+            const end = document.getElementById('exportEndDate').value;
+
+            if (!start || !end) { showCustomAlert("แจ้งเตือน", "กรุณาเลือกวันที่ให้ครบถ้วน", "warning"); return; }
+            if (start > end) { showCustomAlert("แจ้งเตือน", "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด", "warning"); return; }
+
+            const filtered = allTransactions.filter(tx => tx.date >= start && tx.date <= end);
+            if (filtered.length === 0) { showCustomAlert("แจ้งเตือน", "ไม่มีข้อมูลในข่วงวันที่เลือก", "warning"); return; }
+
+            let csvContent = "\uFEFF"; // ใส่ BOM เพื่อให้ Excel เปิดอ่านภาษาไทยได้ถูกต้อง
+            csvContent += "วันที่,เวลา,รายการ,ประเภท,รายรับ,รายจ่าย,ช่องทาง,ทุน(ถ้ามี),กำไร\n";
+
+            let totalIncome = 0; let totalExpense = 0; let totalProfit = 0;
+
+            filtered.sort((a,b) => a.date.localeCompare(b.date)).forEach(tx => {
+                const date = tx.date;
+                const time = tx.time || "-"; 
+                const desc = `"${tx.description || ''}"`;
+                const cat = tx.category === 'SELL' ? 'ปล่อยเช่า' : tx.category === 'BUY' ? 'เช่าเข้า' : tx.category === 'INSTALLMENT' ? 'ค่างวด/มัดจำ' : tx.category === 'OTHER_INCOME' ? 'รับอื่นๆ' : 'จ่ายอื่นๆ';
+                const isIncome = ['SELL', 'OTHER_INCOME', 'INSTALLMENT'].includes(tx.category);
+                const amt = Number(tx.amount || 0); const cost = Number(tx.cost || 0);
+                const wallet = tx.wallet === 'CASH' ? 'เงินสด' : 'โอน';
+
+                let income = isIncome ? amt : 0;
+                let expense = !isIncome ? amt : 0;
+                let profit = (tx.category === 'SELL') ? (amt - cost) : 0;
+
+                totalIncome += income; totalExpense += expense; totalProfit += profit;
+                csvContent += `${date},${time},${desc},${cat},${income},${expense},${wallet},${cost},${profit}\n`;
+            });
+
+            csvContent += `\nยอดรวมสรุป,,, ,${totalIncome},${totalExpense},,,${totalProfit}\n`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `บัญชี_บารมีสมเด็จโต_${start}_ถึง_${end}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            closeExportModal();
+        }
+        // ----------------------------------------------------
+
         function setStockTab(tab) {
             currentStockTab = tab;
-            ['ALL', 'AVAILABLE', 'RESERVED', 'SOLD'].forEach(t => { const el = document.getElementById(`stkTab_${t}`); if(el) { el.className = t === tab ? "shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-800 transition-colors" : "shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors"; } });
+            ['ALL', 'AVAILABLE', 'RESERVED', 'SOLD'].forEach(t => { const el = document.getElementById(`stkTab_${t}`); if(el) { el.className = t === tab ? "shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-[#fef3c7] text-[#92400e] transition-all shadow-sm border border-[#fde68a]" : "shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-all hover:bg-slate-50"; } });
             renderStock();
         }
 
@@ -607,29 +756,29 @@
             document.getElementById('totalStockCount').innerText = `${filtered.length} องค์`; document.getElementById('totalStockValue').innerHTML = `${totalValue.toLocaleString('th-TH')} ฿`;
             
             const cont = document.getElementById('stockContainer');
-            if(!filtered.length) { cont.innerHTML = `<div class="col-span-1 md:col-span-2 text-center py-10 bg-white/40 rounded-3xl text-slate-400 font-semibold border-dashed border border-slate-200">ไม่พบรายการพระเครื่อง</div>`; return; }
+            if(!filtered.length) { cont.innerHTML = `<div class="col-span-1 md:col-span-2 text-center py-12 bg-white rounded-3xl text-slate-400 font-bold border-dashed border-2 border-slate-200"><i class="ph-fill ph-package text-4xl mb-2 text-slate-300"></i><br>ไม่พบรายการพระเครื่อง</div>`; return; }
             
             cont.innerHTML = filtered.map(s => {
                 const stat = s.status || 'AVAILABLE'; const safeName = (s.name || "").replace(/'/g, "\\'").replace(/"/g, '&quot;'); const currentImg = s.imageUrl || 'https://placehold.co/400x400/eeeeee/999999?text=No+Image';
                 const costNum = Number(s.cost || 0); const priceNum = Number(s.price || 0); const agreedNum = Number(s.agreedPrice || s.price || 0); const paidNum = Number(s.paidAmount || 0); const remainNum = agreedNum - paidNum; const sellAmountNum = Number(s.sellAmount || 0);
-                const imgHtml = s.imageUrl ? `<img src="${currentImg}" onclick="openImageViewer('${s.id}')" class="w-full h-40 object-cover rounded-xl mb-3 border border-slate-100 cursor-pointer hover:opacity-85 shadow-sm">` : `<div onclick="openImageViewer('${s.id}')" class="w-full h-40 bg-slate-100 rounded-xl mb-3 flex items-center justify-center text-slate-300 cursor-pointer"><i class="ph-bold ph-image text-4xl"></i></div>`;
+                const imgHtml = s.imageUrl ? `<img src="${currentImg}" onclick="openImageViewer('${s.id}')" class="w-full h-44 object-cover rounded-xl mb-3 border border-slate-100 cursor-pointer hover:opacity-85 shadow-sm transition-opacity">` : `<div onclick="openImageViewer('${s.id}')" class="w-full h-44 bg-slate-100 rounded-xl mb-3 flex items-center justify-center text-slate-300 cursor-pointer hover:bg-slate-200 transition-colors"><i class="ph-fill ph-image text-5xl"></i></div>`;
                 
                 let statusBadge = "";
-                if(stat === 'AVAILABLE') statusBadge = `<div class="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md">พร้อมเช่า</div>`;
-                else if(stat === 'RESERVED') statusBadge = `<div class="absolute top-3 right-3 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md"><i class="ph-bold ph-clock"></i> ติดจอง/ผ่อน</div>`;
-                else if(stat === 'SOLD') statusBadge = `<div class="absolute top-3 right-3 bg-slate-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md">ปิดแล้ว</div>`;
+                if(stat === 'AVAILABLE') statusBadge = `<div class="absolute top-4 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded shadow-md border border-emerald-400">พร้อมเช่า</div>`;
+                else if(stat === 'RESERVED') statusBadge = `<div class="absolute top-4 right-4 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded shadow-md border border-amber-400 flex items-center gap-1"><i class="ph-bold ph-clock"></i> ติดจอง/ผ่อน</div>`;
+                else if(stat === 'SOLD') statusBadge = `<div class="absolute top-4 right-4 bg-slate-600 text-white text-[10px] font-bold px-2.5 py-1 rounded shadow-md border border-slate-500">ปิดแล้ว</div>`;
 
                 let priceSection = "";
-                if (stat === 'SOLD') { priceSection = `<div class="bg-slate-50 p-2 rounded-lg col-span-2 text-left"><p class="text-[11px] text-slate-600 mb-1.5 truncate font-medium"><i class="ph-fill ph-user"></i> ${s.customerName||'ไม่ได้ระบุ'} <i class="ph-fill ph-phone"></i> ${s.customerPhone||'-'}</p><div class="flex justify-between items-center border-t border-slate-200/60 pt-1.5 mt-1"><p class="text-slate-400 text-[10px]">ปิดขาย ${s.soldDate||'-'}</p><p class="font-bold text-slate-700">จบที่ ${sellAmountNum.toLocaleString('th-TH')} ฿</p></div></div>`; } 
-                else if (stat === 'RESERVED') { priceSection = `<div class="bg-slate-50 p-2 rounded-lg"><p class="text-slate-400 mb-0.5">ราคาตกลง</p><p class="font-bold text-slate-700">${agreedNum.toLocaleString('th-TH')} ฿</p></div><div class="bg-rose-50 p-2 rounded-lg"><p class="text-rose-400 mb-0.5">ยอดเหลือ</p><p class="font-bold text-rose-600">${remainNum.toLocaleString('th-TH')} ฿</p></div>`; } 
-                else { priceSection = `<div class="bg-slate-50 p-2 rounded-lg relative"><p class="text-slate-400 mb-0.5">เปิดเช่า</p><p class="font-bold text-emerald-600">${priceNum.toLocaleString('th-TH')} ฿</p></div><div class="bg-rose-50 p-2 rounded-lg"><p class="text-rose-400 mb-0.5">ราคาทุน</p><p class="font-bold text-rose-600">${costNum.toLocaleString('th-TH')} ฿</p></div>`; }
+                if (stat === 'SOLD') { priceSection = `<div class="bg-slate-50 p-3 rounded-xl col-span-2 text-left border border-slate-100"><p class="text-[11px] text-slate-600 mb-1.5 truncate font-bold flex gap-1.5"><i class="ph-fill ph-user text-slate-400 text-sm"></i> ${s.customerName||'ไม่ได้ระบุ'} <i class="ph-fill ph-phone text-slate-400 text-sm ml-1"></i> ${s.customerPhone||'-'}</p><div class="flex justify-between items-center border-t border-slate-200/80 pt-2 mt-1.5"><p class="text-slate-400 text-[10px] font-medium">ปิดขาย ${s.soldDate||'-'}</p><p class="font-bold text-slate-800 text-base">จบที่ ${sellAmountNum.toLocaleString('th-TH')} ฿</p></div></div>`; } 
+                else if (stat === 'RESERVED') { priceSection = `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><p class="text-slate-400 mb-0.5 font-medium">ราคาตกลง</p><p class="font-bold text-slate-700 text-sm">${agreedNum.toLocaleString('th-TH')} ฿</p></div><div class="bg-rose-50 p-2.5 rounded-xl border border-rose-100"><p class="text-rose-400 mb-0.5 font-bold">ยอดเหลือ</p><p class="font-bold text-rose-600 text-sm">${remainNum.toLocaleString('th-TH')} ฿</p></div>`; } 
+                else { priceSection = `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><p class="text-slate-400 mb-0.5 font-medium">เปิดเช่า</p><p class="font-bold text-emerald-600 text-sm">${priceNum.toLocaleString('th-TH')} ฿</p></div><div class="bg-rose-50 p-2.5 rounded-xl border border-rose-100"><p class="text-rose-400 mb-0.5 font-medium">ราคาทุน</p><p class="font-bold text-rose-600 text-sm">${costNum.toLocaleString('th-TH')} ฿</p></div>`; }
 
                 let actionBtn = "";
-                if (stat === 'AVAILABLE') { actionBtn = `<button onclick="openSellStockModal('${s.id}', '${safeName}', ${costNum}, ${priceNum})" class="w-full mt-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold py-2.5 rounded-xl text-sm transition-all shadow-sm"><i class="ph-bold ph-handshake"></i> ปล่อยเช่า / รับมัดจำ</button>`; } 
-                else if (stat === 'RESERVED') { actionBtn = `<button onclick="openAmuletLedgerModal('${s.id}')" class="w-full mt-3 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold py-2.5 rounded-xl text-sm transition-all shadow-sm"><i class="ph-bold ph-folder-open"></i> แฟ้มประวัติ / รับค่างวด</button>`; }
-                else if (stat === 'SOLD') { actionBtn = `<div class="flex gap-2 mt-3 pt-3 border-t border-slate-100"><button onclick="openImageViewer('${s.id}')" class="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 font-bold py-2 rounded-xl text-xs transition-all shadow-sm"><i class="ph-bold ph-magnifying-glass"></i> ดูข้อมูล</button><button onclick="openBuyBackModal('${s.id}', '${safeName}')" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold py-2 rounded-xl text-xs transition-all shadow-sm"><i class="ph-bold ph-arrows-left-right"></i> รับเช่าคืน</button></div>`; }
+                if (stat === 'AVAILABLE') { actionBtn = `<button onclick="openSellStockModal('${s.id}', '${safeName}', ${costNum}, ${priceNum})" class="w-full mt-3.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border border-emerald-200 font-bold py-3 rounded-xl text-sm transition-all shadow-sm flex items-center justify-center gap-1.5"><i class="ph-bold ph-handshake text-lg"></i> ปล่อยเช่า / รับมัดจำ</button>`; } 
+                else if (stat === 'RESERVED') { actionBtn = `<button onclick="openAmuletLedgerModal('${s.id}')" class="w-full mt-3.5 bg-amber-50 hover:bg-amber-500 text-amber-700 hover:text-white border border-amber-200 font-bold py-3 rounded-xl text-sm transition-all shadow-sm flex items-center justify-center gap-1.5"><i class="ph-bold ph-folder-open text-lg"></i> แฟ้มประวัติ / รับค่างวด</button>`; }
+                else if (stat === 'SOLD') { actionBtn = `<div class="flex gap-2 mt-3.5 pt-3.5 border-t border-slate-100"><button onclick="openImageViewer('${s.id}')" class="flex-1 bg-slate-50 hover:bg-slate-200 text-slate-600 border border-slate-200 font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-1.5"><i class="ph-bold ph-magnifying-glass text-sm"></i> ดูข้อมูล</button><button onclick="openBuyBackModal('${s.id}', '${safeName}')" class="flex-1 bg-blue-50 hover:bg-blue-500 text-blue-700 hover:text-white border border-blue-200 font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-1.5"><i class="ph-bold ph-arrows-left-right text-sm"></i> รับเช่าคืน</button></div>`; }
 
-                return `<div class="bg-white/95 rounded-2xl p-4 shadow-sm border ${stat === 'SOLD' ? 'border-slate-200 opacity-80' : 'border-amber-200/50'} relative flex flex-col">${statusBadge} ${imgHtml}<div class="flex items-center gap-2 mb-2"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded text-[10px]">${s.code||'ไม่มีรหัส'}</span><span class="text-[10px] text-slate-500 truncate">${s.category||'ทั่วไป'}</span></div><h4 class="font-bold text-slate-800 mb-3 text-sm line-clamp-2">${s.name||'ไม่มีชื่อ'}</h4><div class="mt-auto grid grid-cols-2 gap-2 text-xs">${priceSection}</div>${actionBtn}${stat !== 'SOLD' ? `<div class="flex gap-2 mt-3 pt-3 border-t border-slate-100"><button onclick="openEditStockModal('${s.id}', '${s.code||''}', '${safeName}', '${s.category||''}', ${costNum}, ${priceNum}, '${s.imageUrl||''}', '${s.customerName||''}', '${s.customerPhone||''}', \`${(s.remark||'').replace(/`/g, "\\`")}\`)" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-[10px]"><i class="ph-bold ph-pencil-simple text-base"></i> แก้ไข</button><button onclick="if(confirm('ลบสต็อกองค์นี้?')) getColRef('amulet_stock').doc('${s.id}').delete()" class="flex-1 bg-rose-50 text-rose-600 font-bold py-2 rounded-xl text-[10px]"><i class="ph-bold ph-trash text-base"></i> ลบ</button></div>` : ''}</div>`;
+                return `<div class="bg-white rounded-3xl p-5 shadow-md border ${stat === 'SOLD' ? 'border-slate-200 opacity-80' : 'border-amber-200/50 hover:shadow-lg transition-shadow'} relative flex flex-col">${statusBadge} ${imgHtml}<div class="flex items-center gap-2 mb-2.5"><span class="bg-amber-100 text-[#a16207] font-bold px-2.5 py-0.5 rounded border border-amber-200 text-[10px] shadow-sm">${s.code||'ไม่มีรหัส'}</span><span class="text-[11px] text-slate-500 truncate font-medium bg-slate-100 px-2 rounded-md">${s.category||'ทั่วไป'}</span></div><h4 class="font-bold text-slate-800 mb-4 text-base line-clamp-2 leading-snug">${s.name||'ไม่มีชื่อ'}</h4><div class="mt-auto grid grid-cols-2 gap-2.5 text-xs">${priceSection}</div>${actionBtn}${stat !== 'SOLD' ? `<div class="flex gap-2 mt-3.5 pt-3.5 border-t border-slate-100"><button onclick="openEditStockModal('${s.id}', '${s.code||''}', '${safeName}', '${s.category||''}', ${costNum}, ${priceNum}, '${s.imageUrl||''}', '${s.customerName||''}', '${s.customerPhone||''}', \`${(s.remark||'').replace(/`/g, "\\`")}\`)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-xl text-xs transition-colors flex justify-center items-center gap-1"><i class="ph-bold ph-pencil-simple text-sm"></i> แก้ไข</button><button onclick="if(confirm('ลบสต็อกองค์นี้?')) getColRef('amulet_stock').doc('${s.id}').delete()" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5 rounded-xl text-xs transition-colors flex justify-center items-center gap-1"><i class="ph-bold ph-trash text-sm"></i> ลบ</button></div>` : ''}</div>`;
             }).join('');
         }
 
@@ -712,7 +861,7 @@
             document.getElementById('sellStockAmount').addEventListener('input', function() { const agreed = Number(document.getElementById('sellAgreedPrice').value) || 0; const paid = Number(this.value) || 0; if (paid > 0 && paid < agreed) document.getElementById('sellStatusWarning').classList.remove('hidden'); else document.getElementById('sellStatusWarning').classList.add('hidden'); });
         }
         function closeSellStockModal() { document.getElementById('sellStockModal').classList.add('hidden'); }
-        function selectSellStockWallet(t) { currentSellStockWallet = t; const trBtn = document.getElementById('btnSellStockTransfer'); const caBtn = document.getElementById('btnSellStockCash'); if(t==='TRANSFER'){ trBtn.className="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center items-center gap-1.5"; caBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } else { caBtn.className="py-3 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold flex justify-center items-center gap-1.5"; trBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } }
+        function selectSellStockWallet(t) { currentSellStockWallet = t; const trBtn = document.getElementById('btnSellStockTransfer'); const caBtn = document.getElementById('btnSellStockCash'); if(t==='TRANSFER'){ trBtn.className="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center items-center gap-1.5 transition-all"; caBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5 transition-all"; } else { caBtn.className="py-3 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold flex justify-center items-center gap-1.5 transition-all"; trBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5 transition-all"; } }
 
         async function handleSellStockSubmit(e) {
             e.preventDefault(); const btn = document.getElementById('btnSubmitSellStock'); btn.disabled = true; btn.innerText = "กำลังประมวลผล...";
@@ -734,7 +883,7 @@
                     stockUpdate.tradingHistory = currentTradingHistory;
                 }
                 batch.update(getColRef("amulet_stock").doc(id), stockUpdate); await batch.commit(); closeSellStockModal(); showCustomAlert("สำเร็จ!", isFullPay ? "ปิดการขายและลงบัญชีแล้ว" : "บันทึกยอดมัดจำแล้ว", "success");
-            } catch(err) { showCustomAlert("ข้อผิดพลาด", err.message, "error"); } finally { btn.disabled = false; btn.innerHTML = '<i class="ph-bold ph-check"></i> ยืนยันรับเงิน'; }
+            } catch(err) { showCustomAlert("ข้อผิดพลาด", err.message, "error"); } finally { btn.disabled = false; btn.innerHTML = '<i class="ph-bold ph-check text-xl"></i> ยืนยันรับเงิน'; }
         }
 
         function openBuyBackModal(id, name) {
@@ -743,7 +892,7 @@
             selectBbWallet('TRANSFER'); document.getElementById('buyBackModal').classList.remove('hidden');
         }
         function closeBuyBackModal() { document.getElementById('buyBackModal').classList.add('hidden'); }
-        function selectBbWallet(t) { currentBbWallet = t; const trBtn = document.getElementById('btnBbTransfer'); const caBtn = document.getElementById('btnBbCash'); if(t==='TRANSFER'){ trBtn.className="py-2.5 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center items-center gap-1.5"; caBtn.className="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } else { caBtn.className="py-2.5 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold flex justify-center items-center gap-1.5"; trBtn.className="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } }
+        function selectBbWallet(t) { currentBbWallet = t; const trBtn = document.getElementById('btnBbTransfer'); const caBtn = document.getElementById('btnBbCash'); if(t==='TRANSFER'){ trBtn.className="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center items-center gap-1.5 transition-all"; caBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5 transition-all"; } else { caBtn.className="py-3 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold flex justify-center items-center gap-1.5 transition-all"; trBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5 transition-all"; } }
 
         async function handleBuyBackSubmit(e) {
             e.preventDefault(); const btn = document.getElementById('btnSubmitBb'); btn.disabled = true; btn.innerText = "กำลังบันทึก...";
@@ -767,11 +916,11 @@
             document.getElementById('ledgerAmuletName').innerText = `${s.code||'N/A'} - ${s.name||'ไม่ระบุ'}`; document.getElementById('ledgerCustomer').innerHTML = `<i class="ph-fill ph-user"></i> ${s.customerName||'ไม่ได้ระบุ'} • <i class="ph-fill ph-phone"></i> ${s.customerPhone||'-'}`;
             document.getElementById('ledgerTotalPrice').innerText = agreed.toLocaleString('th-TH'); document.getElementById('ledgerPaidAmount').innerText = paid.toLocaleString('th-TH'); document.getElementById('ledgerRemainAmount').innerText = remain.toLocaleString('th-TH');
             const histList = document.getElementById('ledgerHistoryList');
-            if (s.payments && s.payments.length > 0) { histList.innerHTML = s.payments.map((p, i) => `<div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 text-sm"><div><p class="font-bold">งวด ${i+1} <span class="text-[10px] font-normal text-slate-400">(${p.type === 'DEPOSIT' ? 'มัดจำ' : 'ค่างวด'})</span></p><p class="text-[10px] text-slate-500">${p.date} • ${p.time}</p></div><div class="text-right"><p class="font-bold text-emerald-600">+${Number(p.amount||0).toLocaleString('th-TH')} ฿</p></div></div>`).join(''); } 
-            else { histList.innerHTML = `<p class="text-center text-sm text-slate-400 py-4">ยังไม่มีประวัติ</p>`; }
+            if (s.payments && s.payments.length > 0) { histList.innerHTML = s.payments.map((p, i) => `<div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 text-sm shadow-sm"><div><p class="font-bold text-slate-700">งวด ${i+1} <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded border border-amber-100 ml-1">${p.type === 'DEPOSIT' ? 'มัดจำ' : 'ค่างวด'}</span></p><p class="text-[10px] text-slate-400 mt-1">${p.date} • ${p.time}</p></div><div class="text-right"><p class="font-bold text-emerald-600">+${Number(p.amount||0).toLocaleString('th-TH')} ฿</p></div></div>`).join(''); } 
+            else { histList.innerHTML = `<p class="text-center text-sm text-slate-400 py-4 font-medium">ยังไม่มีประวัติชำระเงิน</p>`; }
             const actionArea = document.getElementById('ledgerActionArea');
-            if (remain <= 0) { actionArea.innerHTML = `<div class="bg-emerald-50 text-emerald-700 text-center py-3 rounded-xl font-bold">ชำระครบเต็มจำนวนแล้ว</div>`; } 
-            else { actionArea.innerHTML = `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl"><i class="ph-bold ph-plus"></i> บันทึกรับค่างวด (ยอดเหลือ ${remain.toLocaleString('th-TH')})</button>`; }
+            if (remain <= 0) { actionArea.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm"><i class="ph-fill ph-check-circle text-xl"></i> ชำระครบเต็มจำนวนแล้ว</div>`; } 
+            else { actionArea.innerHTML = `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-plus text-lg"></i> บันทึกรับค่างวด (ยอดเหลือ ${remain.toLocaleString('th-TH')})</button>`; }
             document.getElementById('amuletLedgerModal').classList.remove('hidden');
         }
         function closeAmuletLedgerModal() { document.getElementById('amuletLedgerModal').classList.add('hidden'); currentLedgerAmulet = null; }
@@ -782,7 +931,7 @@
             document.getElementById('payInstRemainText').innerText = `ยอดคงเหลือ: ${remain.toLocaleString('th-TH')} ฿`; document.getElementById('payInstAmount').max = remain; document.getElementById('payInstAmount').value = remain; selectInstWallet('TRANSFER'); document.getElementById('payInstallmentModal').classList.remove('hidden');
         }
         function closePayInstallmentModal() { document.getElementById('payInstallmentModal').classList.add('hidden'); }
-        function selectInstWallet(t) { currentInstWallet = t; const trBtn = document.getElementById('btnInstTransfer'); const caBtn = document.getElementById('btnInstCash'); if(t==='TRANSFER'){ trBtn.className="py-2.5 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold flex justify-center items-center gap-1.5"; caBtn.className="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } else { caBtn.className="py-2.5 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold flex justify-center items-center gap-1.5"; trBtn.className="py-2.5 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold flex justify-center items-center gap-1.5"; } }
+        function selectInstWallet(t) { currentInstWallet = t; const trBtn = document.getElementById('btnInstTransfer'); const caBtn = document.getElementById('btnInstCash'); if(t==='TRANSFER'){ trBtn.className="py-3 rounded-xl border-2 border-blue-500 text-blue-700 bg-blue-50 font-bold transition-all flex justify-center items-center gap-1.5"; caBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold transition-all flex justify-center items-center gap-1.5"; } else { caBtn.className="py-3 rounded-xl border-2 border-emerald-500 text-emerald-700 bg-emerald-50 font-bold transition-all flex justify-center items-center gap-1.5"; trBtn.className="py-3 rounded-xl border-2 border-slate-200 text-slate-500 bg-white font-bold transition-all flex justify-center items-center gap-1.5"; } }
 
         async function submitPayInstallment(e) {
             e.preventDefault(); const btn = document.getElementById('btnSubmitInst'); btn.disabled = true; btn.innerText = "กำลังประมวลผล...";
@@ -819,12 +968,12 @@
             let tradingHistoryHtml = '';
             if (s.tradingHistory && s.tradingHistory.length > 0) {
                 tradingHistoryHtml = s.tradingHistory.map(th => {
-                    if (th.type === 'SELL') { return `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 relative"><div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5">${th.date}</p><p class="text-xs font-bold text-slate-700">ปล่อยให้: ${th.customerName} <span class="text-[10px] font-normal text-slate-500">(${th.customerPhone || '-'})</span></p><p class="text-xs font-bold text-emerald-600 mt-1">จบที่: ${Number(th.amount).toLocaleString('th-TH')} ฿</p></div>`; } 
-                    else if (th.type === 'BUY_BACK') { return `<div class="bg-blue-50/50 p-2.5 rounded-xl border border-blue-100 relative"><div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5">${th.date}</p><p class="text-xs font-bold text-slate-700">รับซื้อคืนจาก: ${th.customerName} <span class="text-[10px] font-normal text-slate-500">(${th.customerPhone || '-'})</span></p><p class="text-xs font-bold text-rose-600 mt-1">ทุนรับคืน: ${Number(th.amount).toLocaleString('th-TH')} ฿</p></div>`; }
+                    if (th.type === 'SELL') { return `<div class="bg-slate-50 p-3 rounded-xl border border-slate-100 relative shadow-sm"><div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5 font-bold">${th.date}</p><p class="text-xs font-bold text-slate-700">ปล่อยให้: ${th.customerName} <span class="text-[10px] font-medium text-slate-500">(${th.customerPhone || '-'})</span></p><p class="text-xs font-bold text-emerald-600 mt-1.5">จบที่: ${Number(th.amount).toLocaleString('th-TH')} ฿</p></div>`; } 
+                    else if (th.type === 'BUY_BACK') { return `<div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 relative shadow-sm"><div class="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5 font-bold">${th.date}</p><p class="text-xs font-bold text-slate-700">รับซื้อคืนจาก: ${th.customerName} <span class="text-[10px] font-medium text-slate-500">(${th.customerPhone || '-'})</span></p><p class="text-xs font-bold text-blue-600 mt-1.5">ทุนรับคืน: ${Number(th.amount).toLocaleString('th-TH')} ฿</p></div>`; }
                     return '';
                 }).join('');
             } else if (s.status === 'SOLD') {
-                tradingHistoryHtml = `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 relative"><div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5">${s.soldDate || '-'}</p><p class="text-xs font-bold text-slate-700">ปล่อยให้: ${s.customerName || 'ไม่ระบุชื่อ'}</p><p class="text-xs font-bold text-emerald-600 mt-1">จบที่: ${Number(s.sellAmount || s.agreedPrice || 0).toLocaleString('th-TH')} ฿</p></div>`;
+                tradingHistoryHtml = `<div class="bg-slate-50 p-3 rounded-xl border border-slate-100 relative shadow-sm"><div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-400 rounded-l-xl"></div><p class="text-[10px] text-slate-400 mb-0.5 font-bold">${s.soldDate || '-'}</p><p class="text-xs font-bold text-slate-700">ปล่อยให้: ${s.customerName || 'ไม่ระบุชื่อ'}</p><p class="text-xs font-bold text-emerald-600 mt-1.5">จบที่: ${Number(s.sellAmount || s.agreedPrice || 0).toLocaleString('th-TH')} ฿</p></div>`;
             }
 
             if (tradingHistoryHtml !== '') { historyContainer.classList.remove('hidden'); historyList.innerHTML = tradingHistoryHtml; } else { historyContainer.classList.add('hidden'); historyList.innerHTML = ''; }
@@ -836,9 +985,9 @@
             if (s.priceHistory && s.priceHistory.length > 0) { 
                 hContainer.classList.remove('hidden'); 
                 hList.innerHTML = s.priceHistory.slice().reverse().map(h => {
-                    const costChange = (h.oldCost !== undefined && h.newCost !== undefined && h.oldCost !== h.newCost) ? `<span class="text-rose-400 line-through">${Number(h.oldCost).toLocaleString()}</span> <i class="ph-bold ph-arrow-right"></i> <span class="text-rose-600">${Number(h.newCost).toLocaleString()}</span>` : `-`;
-                    const priceChange = (h.oldPrice !== h.newPrice) ? `<span class="text-slate-400 line-through">${Number(h.oldPrice||0).toLocaleString()}</span> <i class="ph-bold ph-arrow-right"></i> <span class="text-emerald-600">${Number(h.newPrice||0).toLocaleString()}</span>` : `-`;
-                    return `<div class="bg-white p-2.5 rounded-xl border border-slate-100 flex flex-col gap-1"><div class="text-[10px] text-slate-400 font-medium">${h.date} ${h.time}</div><div class="flex justify-between text-[11px] font-bold"><span class="text-slate-500">ปรับราคาเปิด:</span><span>${priceChange} ฿</span></div><div class="flex justify-between text-[11px] font-bold bg-rose-50/50 px-2 py-1 rounded"><span class="text-rose-400">ปรับราคาทุน:</span><span>${costChange} ฿</span></div></div>`;
+                    const costChange = (h.oldCost !== undefined && h.newCost !== undefined && h.oldCost !== h.newCost) ? `<span class="text-rose-400 line-through font-medium">${Number(h.oldCost).toLocaleString()}</span> <i class="ph-bold ph-arrow-right text-rose-300"></i> <span class="text-rose-600">${Number(h.newCost).toLocaleString()}</span>` : `-`;
+                    const priceChange = (h.oldPrice !== h.newPrice) ? `<span class="text-slate-400 line-through font-medium">${Number(h.oldPrice||0).toLocaleString()}</span> <i class="ph-bold ph-arrow-right text-slate-300"></i> <span class="text-emerald-600">${Number(h.newPrice||0).toLocaleString()}</span>` : `-`;
+                    return `<div class="bg-white p-3 rounded-xl border border-slate-100 flex flex-col gap-1 shadow-sm"><div class="text-[10px] text-slate-400 font-bold">${h.date} ${h.time}</div><div class="flex justify-between items-center text-[11px] font-bold"><span class="text-slate-500">ปรับราคาเปิด:</span><span>${priceChange} ฿</span></div><div class="flex justify-between items-center text-[11px] font-bold bg-rose-50/80 px-2 py-1.5 rounded-lg border border-rose-100/50"><span class="text-rose-500">ปรับราคาทุน:</span><span>${costChange} ฿</span></div></div>`;
                 }).join(''); 
             } else { hContainer.classList.add('hidden'); hList.innerHTML = ''; }
             document.getElementById('imageViewerModal').classList.remove('hidden'); 
@@ -847,9 +996,9 @@
 
         function showCustomAlert(title, msg, type) {
             document.getElementById('infoTitle').innerText = title; document.getElementById('infoDesc').innerText = msg; const b = document.getElementById('infoIconBox');
-            if(type==="success"){ b.className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"; b.innerHTML='<i class="ph-bold ph-check-circle text-3xl"></i>'; }
-            else if(type==="error"){ b.className="w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4"; b.innerHTML='<i class="ph-bold ph-warning text-3xl"></i>'; }
-            else { b.className="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4"; b.innerHTML='<i class="ph-bold ph-info text-3xl"></i>'; }
+            if(type==="success"){ b.className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-emerald-50 shadow-sm"; b.innerHTML='<i class="ph-fill ph-check-circle text-4xl"></i>'; }
+            else if(type==="error"){ b.className="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-rose-50 shadow-sm"; b.innerHTML='<i class="ph-fill ph-warning text-4xl"></i>'; }
+            else { b.className="w-20 h-20 bg-amber-100 text-[#a16207] rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-amber-50 shadow-sm"; b.innerHTML='<i class="ph-fill ph-info text-4xl"></i>'; }
             document.getElementById('generalInfoModal').classList.remove('hidden');
         }
 
@@ -858,8 +1007,8 @@
             const q = search.toLowerCase(); 
             const filtered = allDirectory.filter(d => (d.name||"").toLowerCase().includes(q) || (d.category||"").toLowerCase().includes(q));
             const groups = {}; filtered.forEach(d => { if(!groups[d.category]) groups[d.category]=[]; groups[d.category].push(d); });
-            const cont = document.getElementById('directoryContent'); if(Object.keys(groups).length === 0) return cont.innerHTML = `<div class="text-center py-10 text-slate-400">ไม่พบข้อมูลพิมพ์พระ</div>`;
-            cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-gold-dark bg-yellow-50 px-3 py-1.5 rounded-lg">${cat}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center group"><span class="text-sm font-semibold">${item.name}</span><div class="flex gap-2"><button onclick="editDirItem('${item.id}', '${item.category}', '${item.name}')" class="text-slate-400 hover:text-amber-600 p-1.5"><i class="ph-bold ph-pencil-simple text-base"></i></button><button onclick="getColRef('amulet_directory').doc('${item.id}').delete()" class="text-slate-400 hover:text-rose-600 p-1.5"><i class="ph-bold ph-trash text-base"></i></button>${pickMode ? `<button onclick="selectDirItem('${item.name}')" class="bg-white border text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-gold-main hover:text-white shadow-sm">เลือกพิมพ์นี้</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
+            const cont = document.getElementById('directoryContent'); if(Object.keys(groups).length === 0) return cont.innerHTML = `<div class="text-center py-10 text-slate-400 font-bold border-dashed border-2 border-slate-200 rounded-2xl bg-slate-50"><i class="ph-fill ph-books text-4xl mb-2 text-slate-300"></i><br>ไม่พบข้อมูลพิมพ์พระ</div>`;
+            cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-[#7a1019] bg-rose-50 px-4 py-2 rounded-xl border border-rose-100">${cat}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center group shadow-sm hover:shadow-md transition-shadow"><span class="text-sm font-bold text-slate-700">${item.name}</span><div class="flex gap-1.5"><button onclick="editDirItem('${item.id}', '${item.category}', '${item.name}')" class="text-slate-400 hover:text-amber-600 p-2 bg-slate-50 hover:bg-amber-50 rounded-lg transition-colors"><i class="ph-bold ph-pencil-simple text-base"></i></button><button onclick="if(confirm('ลบพิมพ์พระนี้?')) getColRef('amulet_directory').doc('${item.id}').delete()" class="text-slate-400 hover:text-rose-600 p-2 bg-slate-50 hover:bg-rose-50 rounded-lg transition-colors"><i class="ph-bold ph-trash text-base"></i></button>${pickMode ? `<button onclick="selectDirItem('${item.name}')" class="bg-slate-900 text-white border text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-800 shadow-sm transition-colors ml-1">เลือกพิมพ์นี้</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
         }
         function openDirectoryForPicking() { pickMode = true; document.getElementById('directorySearch').value=""; renderDirectory(); closeAddModal(); document.getElementById('directoryModal').classList.remove('hidden'); }
         function openDirectoryModal() { pickMode = false; document.getElementById('directorySearch').value=""; renderDirectory(); document.getElementById('directoryModal').classList.remove('hidden'); }
