@@ -21,7 +21,7 @@
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <!-- Firebase SDKs (เพิ่ม Auth SDK เข้ามาครับ) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -70,7 +70,7 @@
         <p class="text-white/50 text-xs mt-8">Powered by PSU Siam Pro</p>
     </div>
 
-    <!-- Main App Container (จะซ่อนไว้จนกว่าจะล็อกอิน) -->
+    <!-- Main App Container -->
     <div id="mainApp" class="hidden">
         <div class="fixed top-4 right-4 z-50 flex gap-2">
             <button onclick="hardRefresh()" class="bg-white/50 backdrop-blur border border-slate-200 text-slate-400 p-2.5 rounded-full hover:bg-white transition-all shadow-sm">
@@ -78,14 +78,14 @@
             </button>
         </div>
         
-        <!-- เพิ่มปุ่ม Logout ไว้มุมซ้ายบน -->
+        <!-- ปุ่ม Logout -->
         <div class="fixed top-4 left-4 z-50 flex gap-2">
             <button onclick="handleLogout()" class="bg-white/10 backdrop-blur border border-white/20 text-white/80 p-2.5 rounded-full hover:bg-white/20 transition-all shadow-sm" title="ออกจากระบบ">
                 <i class="ph-bold ph-sign-out text-xl"></i>
             </button>
         </div>
 
-        <!-- Header โฉมใหม่ สำหรับร้าน บารมีสมเด็จโต -->
+        <!-- Header -->
         <header class="bg-gradient-to-b from-velvet-dark to-velvet-main text-white px-4 md:px-8 pt-10 pb-28 rounded-b-[32px] shadow-lg relative z-10">
             <div class="max-w-3xl mx-auto flex flex-col justify-center items-center text-center gap-4">
                 <div>
@@ -179,7 +179,7 @@
             <div id="stockContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]"></div>
         </div>
 
-        <!-- Bottom Navigation (ออกแบบใหม่ คลีนๆ) -->
+        <!-- Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
             <div class="max-w-sm mx-auto flex justify-between items-center h-20 px-8 relative">
                 <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-velvet-main w-20 transition-colors group"><i class="ph-bold ph-book-open text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">บัญชี</span></button>
@@ -448,20 +448,20 @@
 
     <!-- Logic -->
     <script>
-        // Firebase Config ของร้าน บารมีสมเด็จโต
+        // ชุดกุญแจที่ถูกต้อง 100%
         const firebaseConfig = {
-          apiKey: "AIzaSyCScLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
+          apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
           authDomain: "baramee-somdej-toh.firebaseapp.com",
           projectId: "baramee-somdej-toh",
           storageBucket: "baramee-somdej-toh.firebasestorage.app",
           messagingSenderId: "61746339555",
           appId: "1:61746339555:web:a8708b7851c2e4b5116fd6",
-          measurementId: "G-R8VYG3F3PF"
+          measurementId: "G-RBVYG3F3PF"
         };
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(); 
-        const auth = firebase.auth(); // ประกาศใช้งานระบบ Authentication
+        const auth = firebase.auth(); 
         function getColRef(colName) { return db.collection(colName); }
 
         let allTransactions = [], allStock = [], allDirectory = [];
@@ -469,22 +469,19 @@
         let currentStockTab = 'ALL', pickMode = false, searchQuery = "";
         let currentWallet = 'TRANSFER', currentSellStockWallet = 'TRANSFER';
         let currentLedgerAmulet = null, currentInstWallet = 'TRANSFER', currentBbWallet = 'TRANSFER';
-        let dbListeners = []; // เก็บตัวดักจับข้อมูลเพื่อปิดตอน Logout
+        let dbListeners = []; 
 
         // --- ระบบล็อกอิน ---
         auth.onAuthStateChanged(user => {
             if(user) {
-                // ถ้าล็อกอินสำเร็จ ซ่อนหน้าล็อกอิน และโชว์แอปหลัก
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('appDatePicker').value = selectedDate;
-                initDatabaseListeners(); // เริ่มดึงข้อมูลเมื่อล็อกอินแล้วเท่านั้น
+                initDatabaseListeners();
             } else {
-                // ถ้ายังไม่ล็อกอิน หรือออกจากระบบแล้ว
                 document.getElementById('mainApp').classList.add('hidden');
                 document.getElementById('loginScreen').classList.remove('hidden');
                 
-                // ล้างข้อมูลหน้าจอตอนออก
                 dbListeners.forEach(unsubscribe => unsubscribe()); 
                 dbListeners = []; allTransactions = []; allStock = [];
                 document.getElementById('loginEmail').value = '';
