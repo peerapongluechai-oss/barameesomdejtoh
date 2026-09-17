@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -22,8 +21,9 @@
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (เพิ่ม Auth SDK เข้ามาครับ) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
@@ -44,118 +44,154 @@
 </head>
 <body class="bg-amber-50/10 min-h-screen pb-28 text-slate-800">
 
-    <div class="fixed top-4 right-4 z-50 flex gap-2">
-        <button onclick="hardRefresh()" class="bg-white/50 backdrop-blur border border-slate-200 text-slate-400 p-2.5 rounded-full hover:bg-white transition-all shadow-sm">
-            <i class="ph-bold ph-arrows-clockwise text-xl"></i>
-        </button>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="fixed inset-0 bg-velvet-dark z-[100] flex flex-col justify-center items-center p-6 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">
+                <i class="ph-fill ph-lock-key text-4xl text-amber-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold heading-font text-velvet-dark mb-1">บารมีสมเด็จโต</h1>
+            <p class="text-sm text-slate-500 mb-6">เข้าสู่ระบบสำหรับเจ้าของร้าน</p>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div class="relative">
+                    <i class="ph-bold ph-envelope absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                    <input type="email" id="loginEmail" required placeholder="อีเมลผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="relative">
+                    <i class="ph-bold ph-key absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                    <input type="password" id="loginPassword" required placeholder="รหัสผ่าน" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <button type="submit" id="btnLogin" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3.5 rounded-xl mt-2 shadow-lg hover:shadow-amber-500/30 transition-all">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
+        </div>
+        <p class="text-white/50 text-xs mt-8">Powered by PSU Siam Pro</p>
     </div>
 
-    <!-- Header โฉมใหม่ สำหรับร้าน บารมีสมเด็จโต -->
-    <header class="bg-gradient-to-b from-velvet-dark to-velvet-main text-white px-4 md:px-8 pt-8 pb-28 rounded-b-[32px] shadow-lg relative z-10">
-        <div class="max-w-3xl mx-auto flex flex-col justify-center items-center text-center gap-4">
-            <div>
-                <p class="text-sm text-amber-200/80 font-medium mb-1">ระบบจัดการร้านพระเครื่อง</p>
-                <h1 class="text-3xl md:text-4xl font-bold heading-font text-yellow-400">บารมีสมเด็จโต</h1>
-            </div>
-            <div class="bg-velvet-dark/60 px-5 py-2.5 rounded-full text-sm font-medium border border-gold-main/30 flex items-center justify-center min-w-[200px]">
-                <i class="ph-bold ph-calendar-blank mr-2 text-amber-200 text-lg"></i> 
-                <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-transparent outline-none cursor-pointer w-full date-picker-dark text-center" />
-            </div>
-        </div>
-    </header>
-
-    <!-- Ledger Workspace (หน้าบัญชี) -->
-    <main id="ledgerWorkspace" class="max-w-3xl mx-auto px-4 md:px-8 -mt-20 relative z-10 space-y-4 transition-all duration-300">
-        <div class="space-y-4">
-            <!-- Dashboard สรุปยอด -->
-            <div class="bg-gradient-to-br from-velvet-main to-velvet-dark p-6 rounded-3xl shadow-xl text-white border border-gold-main/20 relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-5 text-9xl"><i class="ph ph-bank"></i></div>
-                <div class="flex justify-between items-start mb-3 relative z-10">
-                    <p class="text-amber-200/90 text-sm md:text-base font-medium flex items-center gap-1.5"><i class="ph-bold ph-chart-pie-slice"></i> ทรัพย์สินรวมสุทธิ</p>
-                    <span class="text-[10px] md:text-xs font-bold bg-amber-500/20 text-yellow-400 px-2.5 py-1 rounded border border-yellow-500/30">โหมดเจ้าของร้าน</span>
-                </div>
-                <h2 id="totalAssetValue" class="text-4xl md:text-5xl font-bold heading-font tracking-tight text-white mb-6 relative z-10">0 ฿</h2>
-                <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 text-xs md:text-sm relative z-10">
-                    <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-credit-card"></i> ยอดโอน</p><p id="totalTransferValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
-                    <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-coins"></i> เงินสด</p><p id="totalCashValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
-                </div>
-            </div>
-
-            <!-- รายรับ / รายจ่าย ประจำวัน -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
-                    <div class="bg-emerald-50 w-10 h-10 rounded-full flex items-center justify-center text-emerald-600 shrink-0"><i class="ph-bold ph-trend-up text-lg"></i></div>
-                    <div><p class="text-[11px] text-slate-500 font-medium">รายรับวันนี้</p><p id="dailyIncomeText" class="font-bold text-emerald-600 text-base">0 ฿</p></div>
-                </div>
-                <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
-                    <div class="bg-rose-50 w-10 h-10 rounded-full flex items-center justify-center text-rose-600 shrink-0"><i class="ph-bold ph-trend-down text-lg"></i></div>
-                    <div><p class="text-[11px] text-slate-500 font-medium">รายจ่ายวันนี้</p><p id="dailyExpenseText" class="font-bold text-rose-600 text-base">0 ฿</p></div>
-                </div>
-            </div>
-            
-            <div class="bg-amber-50/70 border border-amber-200/60 p-4 rounded-2xl flex items-center gap-3">
-                <div class="bg-amber-100 w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 shrink-0"><i class="ph-bold ph-hand-coins text-lg"></i></div>
-                <div><p class="text-xs text-amber-950/70 font-medium">กำไรสุทธิ (วันนี้)</p><p id="profitText" class="font-bold text-amber-900 text-lg">0 ฿</p></div>
-            </div>
-        </div>
-
-        <div class="pt-2">
-            <div class="relative flex items-center">
-                <div class="absolute left-4 text-gold-main"><i class="ph-bold ph-magnifying-glass text-lg"></i></div>
-                <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="ค้นหารายการ..." class="w-full bg-white/95 border-2 border-gold-main/60 focus:border-gold-dark text-slate-800 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400/20 shadow-sm font-medium"/>
-            </div>
-        </div>
-
-        <div class="flex justify-between items-center pt-4 border-t border-slate-200/60">
-            <h3 class="font-bold heading-font text-slate-800 flex items-center gap-2 text-lg"><i class="ph-bold ph-book-open text-velvet-main"></i> รายการบัญชี</h3>
-            <span id="txCountBadge" class="text-xs bg-slate-200/70 text-slate-600 px-3 py-1 rounded-full font-semibold">0 รายการ</span>
-        </div>
-        <div id="txContainer" class="space-y-3 min-h-[150px]"></div>
-    </main>
-
-    <!-- Stock Workspace (หน้าตู้พระ) -->
-    <div id="stockWorkspace" class="hidden max-w-3xl mx-auto px-4 md:px-8 mt-6 pb-28 space-y-4 transition-all duration-300 animate-in fade-in relative z-10">
-        <div class="bg-gradient-to-br from-amber-700 to-amber-900 text-white p-5 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between items-start gap-4">
-            <i class="ph ph-grid-four absolute -right-6 -bottom-6 text-9xl text-white/5"></i>
-            <div class="relative z-10 w-full">
-                <div class="flex justify-between items-start mb-2">
-                    <h2 class="text-xl font-bold heading-font flex items-center gap-2 text-yellow-300"><i class="ph-bold ph-grid-four"></i> ตู้พระ / สต็อกสินค้า</h2>
-                    <div class="text-right">
-                        <p class="text-[10px] text-amber-200">มูลค่ารวม (<span id="totalStockCount">0 องค์</span>)</p>
-                        <p id="totalStockValue" class="text-2xl font-bold">0 ฿</p>
-                    </div>
-                </div>
-                <button onclick="openDirectoryModal()" class="bg-white/20 hover:bg-white/30 border border-white/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 mt-2"><i class="ph-bold ph-books"></i> เปิดทำเนียบพิมพ์พระ</button>
-            </div>
+    <!-- Main App Container (จะซ่อนไว้จนกว่าจะล็อกอิน) -->
+    <div id="mainApp" class="hidden">
+        <div class="fixed top-4 right-4 z-50 flex gap-2">
+            <button onclick="hardRefresh()" class="bg-white/50 backdrop-blur border border-slate-200 text-slate-400 p-2.5 rounded-full hover:bg-white transition-all shadow-sm">
+                <i class="ph-bold ph-arrows-clockwise text-xl"></i>
+            </button>
         </div>
         
-        <div class="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-            <button onclick="setStockTab('ALL')" id="stkTab_ALL" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-800 transition-colors">ทั้งหมด</button>
-            <button onclick="setStockTab('AVAILABLE')" id="stkTab_AVAILABLE" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">พร้อมเช่า</button>
-            <button onclick="setStockTab('RESERVED')" id="stkTab_RESERVED" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">มัดจำ/ผ่อน</button>
-            <button onclick="setStockTab('SOLD')" id="stkTab_SOLD" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">ประวัติการปล่อย</button>
+        <!-- เพิ่มปุ่ม Logout ไว้มุมซ้ายบน -->
+        <div class="fixed top-4 left-4 z-50 flex gap-2">
+            <button onclick="handleLogout()" class="bg-white/10 backdrop-blur border border-white/20 text-white/80 p-2.5 rounded-full hover:bg-white/20 transition-all shadow-sm" title="ออกจากระบบ">
+                <i class="ph-bold ph-sign-out text-xl"></i>
+            </button>
         </div>
 
-        <div class="relative flex items-center">
-            <i class="ph-bold ph-magnifying-glass absolute left-4 text-slate-400 text-lg"></i>
-            <input type="text" id="stockSearch" oninput="renderStock()" placeholder="ค้นหารหัส หรือ ชื่อพระ..." class="w-full bg-white/95 border border-slate-200 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500 shadow-sm"/>
-        </div>
+        <!-- Header โฉมใหม่ สำหรับร้าน บารมีสมเด็จโต -->
+        <header class="bg-gradient-to-b from-velvet-dark to-velvet-main text-white px-4 md:px-8 pt-10 pb-28 rounded-b-[32px] shadow-lg relative z-10">
+            <div class="max-w-3xl mx-auto flex flex-col justify-center items-center text-center gap-4">
+                <div>
+                    <p class="text-sm text-amber-200/80 font-medium mb-1">ระบบจัดการร้านพระเครื่อง</p>
+                    <h1 class="text-3xl md:text-4xl font-bold heading-font text-yellow-400">บารมีสมเด็จโต</h1>
+                </div>
+                <div class="bg-velvet-dark/60 px-5 py-2.5 rounded-full text-sm font-medium border border-gold-main/30 flex items-center justify-center min-w-[200px]">
+                    <i class="ph-bold ph-calendar-blank mr-2 text-amber-200 text-lg"></i> 
+                    <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-transparent outline-none cursor-pointer w-full date-picker-dark text-center" />
+                </div>
+            </div>
+        </header>
 
-        <div id="stockContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]"></div>
-    </div>
+        <!-- Ledger Workspace (หน้าบัญชี) -->
+        <main id="ledgerWorkspace" class="max-w-3xl mx-auto px-4 md:px-8 -mt-20 relative z-10 space-y-4 transition-all duration-300">
+            <div class="space-y-4">
+                <!-- Dashboard สรุปยอด -->
+                <div class="bg-gradient-to-br from-velvet-main to-velvet-dark p-6 rounded-3xl shadow-xl text-white border border-gold-main/20 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 opacity-5 text-9xl"><i class="ph ph-bank"></i></div>
+                    <div class="flex justify-between items-start mb-3 relative z-10">
+                        <p class="text-amber-200/90 text-sm md:text-base font-medium flex items-center gap-1.5"><i class="ph-bold ph-chart-pie-slice"></i> ทรัพย์สินรวมสุทธิ</p>
+                        <span class="text-[10px] md:text-xs font-bold bg-amber-500/20 text-yellow-400 px-2.5 py-1 rounded border border-yellow-500/30">โหมดเจ้าของร้าน</span>
+                    </div>
+                    <h2 id="totalAssetValue" class="text-4xl md:text-5xl font-bold heading-font tracking-tight text-white mb-6 relative z-10">0 ฿</h2>
+                    <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 text-xs md:text-sm relative z-10">
+                        <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-credit-card"></i> ยอดโอน</p><p id="totalTransferValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
+                        <div><p class="text-amber-200/75 mb-1 flex items-center gap-1.5"><i class="ph ph-coins"></i> เงินสด</p><p id="totalCashValue" class="font-bold text-base md:text-lg text-white">0 ฿</p></div>
+                    </div>
+                </div>
 
-    <!-- Bottom Navigation (ออกแบบใหม่ คลีนๆ) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
-        <div class="max-w-sm mx-auto flex justify-between items-center h-20 px-8 relative">
-            <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-velvet-main w-20 transition-colors group"><i class="ph-bold ph-book-open text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">บัญชี</span></button>
-            
-            <div class="relative -top-6 shrink-0 z-50">
-                <button onclick="openContextAddModal()" class="w-[72px] h-[72px] bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(245,158,11,0.4)] border-[5px] border-white hover:scale-105 active:scale-95 transition-all"><i class="ph-bold ph-plus text-3xl"></i></button>
+                <!-- รายรับ / รายจ่าย ประจำวัน -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
+                        <div class="bg-emerald-50 w-10 h-10 rounded-full flex items-center justify-center text-emerald-600 shrink-0"><i class="ph-bold ph-trend-up text-lg"></i></div>
+                        <div><p class="text-[11px] text-slate-500 font-medium">รายรับวันนี้</p><p id="dailyIncomeText" class="font-bold text-emerald-600 text-base">0 ฿</p></div>
+                    </div>
+                    <div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
+                        <div class="bg-rose-50 w-10 h-10 rounded-full flex items-center justify-center text-rose-600 shrink-0"><i class="ph-bold ph-trend-down text-lg"></i></div>
+                        <div><p class="text-[11px] text-slate-500 font-medium">รายจ่ายวันนี้</p><p id="dailyExpenseText" class="font-bold text-rose-600 text-base">0 ฿</p></div>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-50/70 border border-amber-200/60 p-4 rounded-2xl flex items-center gap-3">
+                    <div class="bg-amber-100 w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 shrink-0"><i class="ph-bold ph-hand-coins text-lg"></i></div>
+                    <div><p class="text-xs text-amber-950/70 font-medium">กำไรสุทธิ (วันนี้)</p><p id="profitText" class="font-bold text-amber-900 text-lg">0 ฿</p></div>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <div class="relative flex items-center">
+                    <div class="absolute left-4 text-gold-main"><i class="ph-bold ph-magnifying-glass text-lg"></i></div>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="ค้นหารายการ..." class="w-full bg-white/95 border-2 border-gold-main/60 focus:border-gold-dark text-slate-800 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400/20 shadow-sm font-medium"/>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-200/60">
+                <h3 class="font-bold heading-font text-slate-800 flex items-center gap-2 text-lg"><i class="ph-bold ph-book-open text-velvet-main"></i> รายการบัญชี</h3>
+                <span id="txCountBadge" class="text-xs bg-slate-200/70 text-slate-600 px-3 py-1 rounded-full font-semibold">0 รายการ</span>
+            </div>
+            <div id="txContainer" class="space-y-3 min-h-[150px]"></div>
+        </main>
+
+        <!-- Stock Workspace (หน้าตู้พระ) -->
+        <div id="stockWorkspace" class="hidden max-w-3xl mx-auto px-4 md:px-8 mt-6 pb-28 space-y-4 transition-all duration-300 animate-in fade-in relative z-10">
+            <div class="bg-gradient-to-br from-amber-700 to-amber-900 text-white p-5 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between items-start gap-4">
+                <i class="ph ph-grid-four absolute -right-6 -bottom-6 text-9xl text-white/5"></i>
+                <div class="relative z-10 w-full">
+                    <div class="flex justify-between items-start mb-2">
+                        <h2 class="text-xl font-bold heading-font flex items-center gap-2 text-yellow-300"><i class="ph-bold ph-grid-four"></i> ตู้พระ / สต็อกสินค้า</h2>
+                        <div class="text-right">
+                            <p class="text-[10px] text-amber-200">มูลค่ารวม (<span id="totalStockCount">0 องค์</span>)</p>
+                            <p id="totalStockValue" class="text-2xl font-bold">0 ฿</p>
+                        </div>
+                    </div>
+                    <button onclick="openDirectoryModal()" class="bg-white/20 hover:bg-white/30 border border-white/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 mt-2"><i class="ph-bold ph-books"></i> เปิดทำเนียบพิมพ์พระ</button>
+                </div>
             </div>
             
-            <button id="navTab_stock" onclick="switchTab('stock')" class="flex flex-col items-center justify-center text-slate-400 hover:text-amber-700 w-20 transition-colors group"><i class="ph-bold ph-grid-four text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">ตู้พระ</span></button>
+            <div class="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
+                <button onclick="setStockTab('ALL')" id="stkTab_ALL" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-800 transition-colors">ทั้งหมด</button>
+                <button onclick="setStockTab('AVAILABLE')" id="stkTab_AVAILABLE" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">พร้อมเช่า</button>
+                <button onclick="setStockTab('RESERVED')" id="stkTab_RESERVED" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">มัดจำ/ผ่อน</button>
+                <button onclick="setStockTab('SOLD')" id="stkTab_SOLD" class="shrink-0 px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-500 border border-slate-200 transition-colors">ประวัติการปล่อย</button>
+            </div>
+
+            <div class="relative flex items-center">
+                <i class="ph-bold ph-magnifying-glass absolute left-4 text-slate-400 text-lg"></i>
+                <input type="text" id="stockSearch" oninput="renderStock()" placeholder="ค้นหารหัส หรือ ชื่อพระ..." class="w-full bg-white/95 border border-slate-200 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-amber-500 shadow-sm"/>
+            </div>
+
+            <div id="stockContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]"></div>
         </div>
-    </nav>
+
+        <!-- Bottom Navigation (ออกแบบใหม่ คลีนๆ) -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40">
+            <div class="max-w-sm mx-auto flex justify-between items-center h-20 px-8 relative">
+                <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-velvet-main w-20 transition-colors group"><i class="ph-bold ph-book-open text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">บัญชี</span></button>
+                
+                <div class="relative -top-6 shrink-0 z-50">
+                    <button onclick="openContextAddModal()" class="w-[72px] h-[72px] bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(245,158,11,0.4)] border-[5px] border-white hover:scale-105 active:scale-95 transition-all"><i class="ph-bold ph-plus text-3xl"></i></button>
+                </div>
+                
+                <button id="navTab_stock" onclick="switchTab('stock')" class="flex flex-col items-center justify-center text-slate-400 hover:text-amber-700 w-20 transition-colors group"><i class="ph-bold ph-grid-four text-3xl mb-1 group-hover:-translate-y-1 transition-transform"></i><span class="text-xs font-bold tracking-wide">ตู้พระ</span></button>
+            </div>
+        </nav>
+    </div> <!-- ปิด Main App Container -->
 
     <!-- === Modals === -->
     
@@ -412,7 +448,7 @@
 
     <!-- Logic -->
     <script>
-        // ใส่ Firebase Config ตรงนี้ครับ
+        // Firebase Config ของร้าน บารมีสมเด็จโต
         const firebaseConfig = {
           apiKey: "AIzaSyCScLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
           authDomain: "baramee-somdej-toh.firebaseapp.com",
@@ -424,29 +460,66 @@
         };
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(); function getColRef(colName) { return db.collection(colName); }
+        const db = firebase.firestore(); 
+        const auth = firebase.auth(); // ประกาศใช้งานระบบ Authentication
+        function getColRef(colName) { return db.collection(colName); }
 
         let allTransactions = [], allStock = [], allDirectory = [];
         let currentActiveTab = 'ledger', selectedDate = new Date().toISOString().split('T')[0];
         let currentStockTab = 'ALL', pickMode = false, searchQuery = "";
         let currentWallet = 'TRANSFER', currentSellStockWallet = 'TRANSFER';
         let currentLedgerAmulet = null, currentInstWallet = 'TRANSFER', currentBbWallet = 'TRANSFER';
+        let dbListeners = []; // เก็บตัวดักจับข้อมูลเพื่อปิดตอน Logout
 
-        // แอปสำหรับใช้คนเดียว ให้สิทธิ์ Owner เสมอ
-        const isOwner = true; 
+        // --- ระบบล็อกอิน ---
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                // ถ้าล็อกอินสำเร็จ ซ่อนหน้าล็อกอิน และโชว์แอปหลัก
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('appDatePicker').value = selectedDate;
+                initDatabaseListeners(); // เริ่มดึงข้อมูลเมื่อล็อกอินแล้วเท่านั้น
+            } else {
+                // ถ้ายังไม่ล็อกอิน หรือออกจากระบบแล้ว
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                
+                // ล้างข้อมูลหน้าจอตอนออก
+                dbListeners.forEach(unsubscribe => unsubscribe()); 
+                dbListeners = []; allTransactions = []; allStock = [];
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            }
+        });
 
-        window.onload = function() {
-            document.getElementById('appDatePicker').value = selectedDate;
-            try { initDatabaseListeners(); console.log("Baramee Somdej Toh App Initialized."); } 
-            catch (error) { showCustomAlert("Error", error.message, "error"); }
-        };
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLogin');
+            btn.disabled = true; btn.innerText = "กำลังตรวจสอบ...";
+            try {
+                await auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+            } catch(err) {
+                showCustomAlert("ข้อผิดพลาด", "อีเมลหรือรหัสผ่านไม่ถูกต้อง", "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "เข้าสู่ระบบ";
+            }
+        }
+
+        function handleLogout() {
+            if(confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+                auth.signOut();
+            }
+        }
+        // --- จบระบบล็อกอิน ---
 
         function hardRefresh() { window.location.reload(true); }
 
         function initDatabaseListeners() {
-            getColRef("transactions").onSnapshot(snap => { allTransactions = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(currentActiveTab === 'ledger') renderAll(); });
-            getColRef("amulet_stock").onSnapshot(snap => { allStock = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(currentActiveTab === 'stock') renderStock(); });
-            getColRef("amulet_directory").onSnapshot(snap => { allDirectory = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(allDirectory.length === 0) seedDirectory(); });
+            try {
+                dbListeners.push(getColRef("transactions").onSnapshot(snap => { allTransactions = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(currentActiveTab === 'ledger') renderAll(); }));
+                dbListeners.push(getColRef("amulet_stock").onSnapshot(snap => { allStock = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(currentActiveTab === 'stock') renderStock(); }));
+                dbListeners.push(getColRef("amulet_directory").onSnapshot(snap => { allDirectory = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); if(allDirectory.length === 0) seedDirectory(); }));
+            } catch(error) { console.error("DB Listen Error:", error); }
         }
 
         function changeAppDate(val) { selectedDate = val; renderAll(); }
