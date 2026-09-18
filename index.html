@@ -27,6 +27,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
+    <!-- ปลั๊กอินสำหรับบีบอัดรูปภาพก่อนอัพโหลด (ลดปัญหาไฟล์ใหญ่/ค้าง) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Pridi:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -119,7 +122,7 @@
                     <h1 class="text-4xl md:text-5xl font-bold heading-font text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-600 drop-shadow-sm pb-1">บารมีสมเด็จโต</h1>
                 </div>
                 
-                <!-- Date Picker รูปแบบใหม่ (แก้ตามรูปที่ลูกค้าวงมา) -->
+                <!-- Date Picker รูปแบบใหม่ -->
                 <div class="bg-[#3a0606]/80 px-6 py-3.5 rounded-2xl text-sm font-medium border border-[#eab308]/50 shadow-[0_4px_20px_rgba(234,179,8,0.2)] flex items-center justify-center min-w-[220px] transition-all hover:bg-[#4a0808] hover:border-[#eab308] group cursor-pointer relative">
                     <i class="ph-bold ph-calendar-blank mr-3 text-[#fde047] text-xl group-hover:scale-110 transition-transform"></i> 
                     <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-transparent outline-none cursor-pointer w-full date-picker-dark text-center" />
@@ -171,7 +174,7 @@
 
             <div class="flex justify-between items-center pt-5 border-t border-slate-200/80">
                 <h3 class="font-bold heading-font text-slate-800 flex items-center gap-2 text-lg"><i class="ph-fill ph-book-bookmark text-[#7a1019] text-xl"></i> รายการบัญชี</h3>
-                <!-- ปุ่ม Export CSV อยู่ตรงนี้ครับ -->
+                <!-- ปุ่ม Export CSV -->
                 <div class="flex gap-2 items-center">
                     <button onclick="openExportModal()" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors border border-emerald-200 shadow-sm"><i class="ph-bold ph-file-csv text-base"></i> โหลด CSV</button>
                     <span id="txCountBadge" class="text-xs bg-slate-100 text-slate-600 px-3 py-2 rounded-xl font-bold border border-slate-200">0 รายการ</span>
@@ -290,13 +293,13 @@
         </div>
     </div>
 
-    <!-- Add Stock Modal -->
+    <!-- Add Stock Modal (มีการแก้ไขฟังก์ชันอัพโหลดรูปที่นี่) -->
     <div id="addStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
         <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeAddStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
             <h3 class="text-xl font-bold heading-font text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-package text-[#a16207] text-3xl"></i> เพิ่มพระเข้าตู้</h3>
             <form id="stockForm" onsubmit="handleManualStockSubmit(event)" class="space-y-4 text-sm">
-                <div><label class="block font-bold text-slate-600 mb-1.5">อัปโหลดรูป</label><input type="file" id="stockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2 bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-all"></div>
+                <div><label class="block font-bold text-slate-600 mb-1.5">อัปโหลดรูป (รองรับไฟล์จากมือถือ)</label><input type="file" id="stockImage" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2 bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="block font-bold text-slate-600 mb-1.5">รหัสพระ</label><input type="text" id="stockCode" required class="w-full border border-slate-200 rounded-xl px-4 py-3 uppercase focus:border-[#a16207] outline-none"></div>
                     <div><label class="block font-bold text-slate-600 mb-1.5">หมวดหมู่</label><input type="text" id="stockCategory" required class="w-full border border-slate-200 rounded-xl px-4 py-3 focus:border-[#a16207] outline-none"></div>
@@ -349,7 +352,7 @@
     </div>
 
     <!-- Sell Stock Modal -->
-    <div id="sellStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in zoom-in-95">
+    <div id="sellStockModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden animate-in fade-in">
         <div class="bg-white w-full max-w-sm rounded-[32px] shadow-2xl p-6 md:p-8 relative max-h-[95vh] overflow-y-auto border-t-8 border-emerald-500">
             <button onclick="closeSellStockModal()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
             <h3 class="text-xl font-bold heading-font text-slate-800 mb-1 flex items-center gap-2"><i class="ph-fill ph-handshake text-emerald-500 text-3xl"></i> ทำรายการเช่า</h3>
@@ -510,7 +513,7 @@
 
     <!-- Logic -->
     <script>
-        // ชุดกุญแจ Firebase ที่ถูกต้อง 100%
+        // ชุดกุญแจ Firebase ที่ถูกต้อง
         const firebaseConfig = {
           apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
           authDomain: "baramee-somdej-toh.firebaseapp.com",
@@ -698,7 +701,7 @@
             const filtered = allTransactions.filter(tx => tx.date >= start && tx.date <= end);
             if (filtered.length === 0) { showCustomAlert("แจ้งเตือน", "ไม่มีข้อมูลในข่วงวันที่เลือก", "warning"); return; }
 
-            let csvContent = "\uFEFF"; // ใส่ BOM เพื่อให้ Excel เปิดอ่านภาษาไทยได้ถูกต้อง
+            let csvContent = "\uFEFF"; 
             csvContent += "วันที่,เวลา,รายการ,ประเภท,รายรับ,รายจ่าย,ช่องทาง,ทุน(ถ้ามี),กำไร\n";
 
             let totalIncome = 0; let totalExpense = 0; let totalProfit = 0;
@@ -782,7 +785,29 @@
             }).join('');
         }
 
-        async function uploadImage(file) { const storageRef = firebase.storage().ref(); const fileRef = storageRef.child(`amulets/${Date.now()}_${file.name}`); await fileRef.put(file); return await fileRef.getDownloadURL(); }
+        // ----------------------------------------------------
+        // ส่วนการแก้ไข ฟังก์ชัน Upload ภาพแบบย่อขนาดแล้ว
+        // ----------------------------------------------------
+        async function uploadImage(file) { 
+            try {
+                const options = {
+                    maxSizeMB: 1, // บีบอัดไม่เกิน 1MB
+                    maxWidthOrHeight: 1200,
+                    useWebWorker: true
+                };
+                const compressedFile = await imageCompression(file, options);
+                
+                const storageRef = firebase.storage().ref(); 
+                const fileRef = storageRef.child(`amulets/${Date.now()}_${compressedFile.name}`); 
+                await fileRef.put(compressedFile); 
+                return await fileRef.getDownloadURL(); 
+            } catch (error) {
+                console.error("Upload Error:", error);
+                throw new Error("อัพโหลดรูปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+            }
+        }
+        // ----------------------------------------------------
+
         function openAddStockModal() { document.getElementById('addStockModal').classList.remove('hidden'); }
         function closeAddStockModal() { document.getElementById('addStockModal').classList.add('hidden'); document.getElementById('stockForm').reset(); }
 
