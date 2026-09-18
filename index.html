@@ -785,20 +785,22 @@
             }).join('');
         }
 
-        // ----------------------------------------------------
-        // ส่วนการแก้ไข ฟังก์ชัน Upload ภาพแบบย่อขนาดแล้ว
-        // ----------------------------------------------------
         async function uploadImage(file) { 
             try {
+                // 1. บีบอัดรูปภาพให้เล็กลง (แก้ปัญหาไฟล์ใหญ่ทำให้อัปโหลดนาน/ค้าง)
                 const options = {
-                    maxSizeMB: 1, // บีบอัดไม่เกิน 1MB
+                    maxSizeMB: 1, 
                     maxWidthOrHeight: 1200,
-                    useWebWorker: true
+                    useWebWorker: false // ปิด Web Worker เพื่อความเสถียรบนเบราว์เซอร์มือถือ
                 };
                 const compressedFile = await imageCompression(file, options);
                 
+                // 2. อัพโหลดขึ้น Firebase
                 const storageRef = firebase.storage().ref(); 
-                const fileRef = storageRef.child(`amulets/${Date.now()}_${compressedFile.name}`); 
+                // เคลียร์ชื่อไฟล์ที่มีภาษาไทยหรืออักขระพิเศษ ป้องกัน Firebase Error
+                const safeFileName = compressedFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                const fileRef = storageRef.child(`amulets/${Date.now()}_${safeFileName}`); 
+                
                 await fileRef.put(compressedFile); 
                 return await fileRef.getDownloadURL(); 
             } catch (error) {
@@ -806,7 +808,6 @@
                 throw new Error("อัพโหลดรูปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
             }
         }
-        // ----------------------------------------------------
 
         function openAddStockModal() { document.getElementById('addStockModal').classList.remove('hidden'); }
         function closeAddStockModal() { document.getElementById('addStockModal').classList.add('hidden'); document.getElementById('stockForm').reset(); }
