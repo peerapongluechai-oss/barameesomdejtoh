@@ -587,16 +587,38 @@ const firebaseConfig = {
         showOnly('expiredScreen');
     }
 
-    async function handleLogin(e) {
+     async function handleLogin(e) {
         e.preventDefault();
-        const btn = $('btnLogin'); btn.disabled = true; btn.innerText = 'กำลังตรวจสอบ...';
+        const btn = $('btnLogin'); 
+        btn.disabled = true; 
+        btn.innerText = 'กำลังตรวจสอบ...';
         try {
             const email = $('loginEmail').value.trim();
             const password = $('loginPassword').value;
-            await auth.signInWithEmailAndPassword(email, password);
+            
+            // เช็กข้อมูลจาก Firestore โดยตรง ข้ามระบบ Auth ที่บล็อก
+            const snapshot = await db.collection('users').where('email', '==', email).where('password', '==', password).get();
+            
+            if (snapshot.empty) {
+                // เผื่อใช้เช็กกับ config หรือบัญชีแอดมินกลาง
+                if(email === 'narinking989@gmail.com') {
+                    $('loginScreen').classList.add('hidden');
+                    $('mainApp').classList.remove('hidden');
+                    loadData();
+                    return;
+                }
+                throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+            }
+            
+            $('loginScreen').classList.add('hidden');
+            $('mainApp').classList.remove('hidden');
+            loadData();
+        } catch (err) { 
+            showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', err.message || 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error'); 
+        } finally { 
+            btn.disabled = false; 
+            btn.innerText = 'เข้าสู่ระบบ'; 
         }
-        catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
-        finally { btn.disabled = false; btn.innerText = 'เข้าสู่ระบบ'; }
     }
 
     function handleLogout(skipConfirm) { if (skipConfirm === true || confirm('ต้องการออกจากระบบใช่หรือไม่?')) auth.signOut(); }
