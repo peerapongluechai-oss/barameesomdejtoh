@@ -485,15 +485,16 @@
     <script>
     'use strict';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCsCLG8M2XL02CUeNsmzWvhPE95ELLZXes",
-      authDomain: "baramee-somdej-toh.firebaseapp.com",
-      projectId: "baramee-somdej-toh",
-      storageBucket: "baramee-somdej-toh.firebasestorage.app",
-      messagingSenderId: "61746339555",
-      appId: "1:61746339555:web:a8708b7851c2e4b5116fd6",
-      measurementId: "G-RBVYG3F3PF"
-    };
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
+  authDomain: "baramee-somdej-toh.firebaseapp.com",
+  projectId: "baramee-somdej-toh",
+  storageBucket: "baramee-somdej-toh.firebasestorage.app",
+  messagingSenderId: "61746339555",
+  appId: "1:61746339555:web:a8708b7851c2e4b5116fd6",
+  measurementId: "G-RBVYG3F3PF"
+};
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
