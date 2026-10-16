@@ -64,7 +64,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div class="relative">
                     <i class="ph-bold ph-user absolute left-4 top-3.5 text-slate-400 text-lg"></i>
-                    <input type="text" id="loginEmail" required placeholder="อีเมล หรือ ไอดีผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
+                    <input type="text" id="loginEmail" required placeholder="อีเมลผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
                 </div>
                 <div class="relative">
                     <i class="ph-bold ph-key absolute left-4 top-3.5 text-slate-400 text-lg"></i>
@@ -589,14 +589,11 @@
         e.preventDefault();
         const btn = $('btnLogin'); btn.disabled = true; btn.innerText = 'กำลังตรวจสอบ...';
         try {
-            let userInput = $('loginEmail').value.trim();
-            let targetEmail = userInput;
-            if (!userInput.includes('@')) {
-                targetEmail = userInput + '@barameesomdejtoh.local';
-            }
-            await auth.signInWithEmailAndPassword(targetEmail, $('loginPassword').value);
+            const email = $('loginEmail').value.trim();
+            const password = $('loginPassword').value;
+            await auth.signInWithEmailAndPassword(email, password);
         }
-        catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล/ไอดี หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
+        catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
         finally { btn.disabled = false; btn.innerText = 'เข้าสู่ระบบ'; }
     }
 
