@@ -63,8 +63,8 @@
             <p class="text-sm text-slate-500 mb-8 font-medium">เข้าสู่ระบบสำหรับเจ้าของร้าน</p>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div class="relative">
-                    <i class="ph-bold ph-envelope absolute left-4 top-3.5 text-slate-400 text-lg"></i>
-                    <input type="email" id="loginEmail" required placeholder="อีเมลผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
+                    <i class="ph-bold ph-user absolute left-4 top-3.5 text-slate-400 text-lg"></i>
+                    <input type="text" id="loginEmail" required placeholder="อีเมล หรือ ไอดีผู้ใช้งาน" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-[#eab308] focus:ring-2 focus:ring-[#eab308]/20 transition-all font-medium">
                 </div>
                 <div class="relative">
                     <i class="ph-bold ph-key absolute left-4 top-3.5 text-slate-400 text-lg"></i>
@@ -485,16 +485,15 @@
     <script>
     'use strict';
 
-   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
-  authDomain: "baramee-somdej-toh.firebaseapp.com",
-  projectId: "baramee-somdej-toh",
-  storageBucket: "baramee-somdej-toh.firebasestorage.app",
-  messagingSenderId: "61746339555",
-  appId: "1:61746339555:web:a8708b7851c2e4b5116fd6",
-  measurementId: "G-RBVYG3F3PF"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCScLg8M2Xl02CUeNsmzWvhPE95ELlZXes",
+      authDomain: "baramee-somdej-toh.firebaseapp.com",
+      projectId: "baramee-somdej-toh",
+      storageBucket: "baramee-somdej-toh.firebasestorage.app",
+      messagingSenderId: "61746339555",
+      appId: "1:61746339555:web:a8708b7851c2e4b5116fd6",
+      measurementId: "G-RBVYG3F3PF"
+    };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
@@ -512,7 +511,12 @@ const firebaseConfig = {
     function nowTime() { return new Date().toLocaleTimeString('th-TH', { hour12: false }); }
     function thaiDate(d) { return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); }
     function checkMoney(n, label) { if (!Number.isFinite(n) || n < 0 || n > MAX_AMOUNT) throw new Error(`${label} ไม่ถูกต้อง`); return n; }
-    function tsMillis(x) { return x && typeof x.toMillis === 'function' ? x.toMillis() : Date.now(); }
+    function tsMillis(x) { 
+        if (!x) return Date.now();
+        if (typeof x.toMillis === 'function') return x.toMillis();
+        if (typeof x.seconds === 'number') return x.seconds * 1000;
+        return Date.now(); 
+    }
 
     let allTransactions = [], allStock = [], allDirectory = [];
     let currentActiveTab = 'ledger', selectedDate = localDateStr();
@@ -584,8 +588,15 @@ const firebaseConfig = {
     async function handleLogin(e) {
         e.preventDefault();
         const btn = $('btnLogin'); btn.disabled = true; btn.innerText = 'กำลังตรวจสอบ...';
-        try { await auth.signInWithEmailAndPassword($('loginEmail').value.trim(), $('loginPassword').value); }
-        catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error'); }
+        try {
+            let userInput = $('loginEmail').value.trim();
+            let targetEmail = userInput;
+            if (!userInput.includes('@')) {
+                targetEmail = userInput + '@barameesomdej.local';
+            }
+            await auth.signInWithEmailAndPassword(targetEmail, $('loginPassword').value);
+        }
+        catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล/ไอดี หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
         finally { btn.disabled = false; btn.innerText = 'เข้าสู่ระบบ'; }
     }
 
