@@ -28,7 +28,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
-    <!-- บีบอัดรูปภาพก่อนอัปโหลด -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Pridi:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -100,7 +99,7 @@
             ⚠️ แจ้งเตือน: สิทธิ์ใช้งานจะสิ้นสุดในอีก <span id="expireDaysText"></span> วัน (<span id="expireDateText"></span>)
         </div>
 
-        <!-- Header พรีเมียมสไตล์โมเดิร์น -->
+        <!-- Header พรีเมียม -->
         <header class="px-6 pt-6 pb-6 bg-[#18181b] border-b border-white/5 flex justify-between items-center relative z-20">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md text-slate-950 text-xl font-bold">
@@ -116,7 +115,6 @@
             </div>
         </header>
 
-        <!-- วันที่และตัวเลือกวันที่ -->
         <div class="px-6 py-4 bg-[#18181b]/50 border-b border-white/5 flex items-center justify-between">
             <span class="text-xs text-slate-400 font-medium flex items-center gap-1.5"><i class="ph-bold ph-calendar text-amber-400"></i> เลือกวันที่ดำเนินงาน</span>
             <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-[#1c1c1e] border border-white/10 rounded-xl px-3 py-1.5 text-xs outline-none date-picker-dark" />
@@ -124,7 +122,6 @@
 
         <!-- ================= Ledger Tab ================= -->
         <main id="ledgerWorkspace" class="px-6 pt-6 space-y-6 max-w-xl mx-auto">
-            <!-- ยอดทรัพย์สินรวมสุทธิ (Dashboard Card) -->
             <div class="bg-gradient-to-br from-[#1c1c1e] to-[#262629] p-6 rounded-[28px] border border-white/10 shadow-xl relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 opacity-5 text-9xl text-amber-400"><i class="ph-fill ph-bank"></i></div>
                 <div class="flex justify-between items-center mb-2 relative z-10">
@@ -138,7 +135,6 @@
                 </div>
             </div>
 
-            <!-- สถิติรายรับ-รายจ่ายวันนี้ -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-[#1c1c1e] border border-white/10 p-4 rounded-2xl flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0"><i class="ph-bold ph-trend-up text-lg"></i></div>
@@ -150,7 +146,6 @@
                 </div>
             </div>
 
-            <!-- กำไรสุทธิวันนี้ -->
             <div class="bg-[#1c1c1e] border border-amber-500/30 p-4 rounded-2xl flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center"><i class="ph-bold ph-hand-coins text-lg"></i></div>
@@ -159,7 +154,6 @@
                 <button onclick="openAddModal()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md">บันทึกรับ/จ่าย</button>
             </div>
 
-            <!-- ค้นหาและรายการบัญชี -->
             <div class="space-y-3 pt-2">
                 <div class="relative flex items-center">
                     <i class="ph-bold ph-magnifying-glass absolute left-4 text-slate-500"></i>
@@ -187,11 +181,9 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <button onclick="openAddStockModal()" class="bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:opacity-90 transition-all flex items-center gap-1.5"><i class="ph-bold ph-plus"></i> เพิ่มพระ</button>
-                    <button onclick="openDirectoryModal()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"><i class="ph-bold ph-books"></i> ทำเนียบพิมพ์</button>
                 </div>
             </div>
 
-            <!-- Tab ตู้พระ -->
             <div class="flex overflow-x-auto gap-2 py-1 hide-scrollbar">
                 <button onclick="setStockTab('ALL')" id="stkTab_ALL" class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-amber-400 text-slate-950 transition-all">ทั้งหมด</button>
                 <button onclick="setStockTab('AVAILABLE')" id="stkTab_AVAILABLE" class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-[#1c1c1e] text-slate-400 border border-white/10 transition-all">พร้อมเช่า</button>
@@ -237,10 +229,7 @@
             <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
                 <div>
                     <label class="block font-bold text-slate-400 mb-1">ชื่อรายการ</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="formDesc" required maxlength="200" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-amber-400">
-                        <button type="button" onclick="openDirectoryForPicking()" class="shrink-0 bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 rounded-xl font-bold hover:bg-amber-500/20"><i class="ph-bold ph-books"></i> เลือกพิมพ์</button>
-                    </div>
+                    <input type="text" id="formDesc" required maxlength="200" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-amber-400">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-400 mb-1">ประเภทรายการ</label>
@@ -334,11 +323,11 @@
         return Date.now(); 
     }
 
-    let allTransactions = [], allStock = [], allDirectory = [];
+    let allTransactions = [], allStock = [];
     let currentActiveTab = 'ledger', selectedDate = localDateStr();
-    let currentStockTab = 'ALL', pickMode = false, searchQuery = '';
+    let currentStockTab = 'ALL', searchQuery = '';
     let currentWallet = 'TRANSFER';
-    let dbListeners = [], dataStarted = false, seedAttempted = false;
+    let dbListeners = [], dataStarted = false;
     let license = null, licenseUnsub = null, licenseTimer = null, serverDenied = false;
 
     const MODAL_IDS = ['exportCsvModal', 'addModal', 'addStockModal', 'generalInfoModal'];
@@ -348,7 +337,7 @@
     auth.onAuthStateChanged(user => {
         stopLicenseWatch(); stopData(); closeAllModals();
         if (!user) {
-            allTransactions = []; allStock = []; allDirectory = []; license = null;
+            allTransactions = []; allStock = []; license = null;
             $('loginEmail').value = ''; $('loginPassword').value = '';
             showOnly('loginScreen'); return;
         }
@@ -413,7 +402,6 @@
         if (dataStarted) return; dataStarted = true;
         dbListeners.push(getColRef('transactions').onSnapshot(snap => { allTransactions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'ledger') renderAll(); }, handleDbError));
         dbListeners.push(getColRef('amulet_stock').onSnapshot(snap => { allStock = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'stock') renderStock(); }, handleDbError));
-        dbListeners.push(getColRef('amulet_directory').onSnapshot(snap => { allDirectory = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); }, handleDbError));
     }
 
     function stopData() { dbListeners.forEach(unsub => { try { unsub(); } catch (_) {} }); dbListeners = []; dataStarted = false; }
@@ -491,11 +479,11 @@
 
     function handleSearch(v) { searchQuery = v; renderAll(); }
 
-    const W_STYLE = { TRANSFER: 'py-2 rounded-xl border-2 border-amber-400 text-amber-400 bg-amber-400/10 text-xs font-bold', CASH: 'py-2 rounded-xl border-2 border-emerald-400 text-emerald-400 bg-emerald-400/10 text-xs font-bold', OFF: 'py-2 rounded-xl border border-white/10 text-slate-400 bg-[#121212] text-xs font-bold' };
-    function selectWallet(t) { currentWallet = t; $('btnWalletTransfer.className = t === 'TRANSFER' ? W_STYLE.TRANSFER : W_STYLE.OFF; $('btnWalletCash').className = t === 'CASH' ? W_STYLE.CASH : W_STYLE.OFF; }
+    const W_STYLE = { TRANSFER: 'py-2.5 rounded-xl border-2 border-amber-400 text-amber-400 bg-amber-400/10 text-xs font-bold transition-all', CASH: 'py-2.5 rounded-xl border-2 border-emerald-400 text-emerald-400 bg-emerald-400/10 text-xs font-bold transition-all', OFF: 'py-2.5 rounded-xl border border-white/10 text-slate-400 bg-[#121212] text-xs font-bold transition-all' };
+    function selectWallet(t) { currentWallet = t; $('btnWalletTransfer').className = t === 'TRANSFER' ? W_STYLE.TRANSFER : W_STYLE.OFF; $('btnWalletCash').className = t === 'CASH' ? W_STYLE.CASH : W_STYLE.OFF; }
 
     function openAddModal() { $('addModal').classList.remove('hidden'); }
-    function closeAddModal() { $('addModal').classList.add('hidden'); $('txForm').reset(); }
+    function closeAddModal() { $('addModal').classList.add('hidden'); $('txForm').reset(); selectWallet('TRANSFER'); }
 
     async function handleFormSubmit(e) {
         e.preventDefault();
@@ -534,7 +522,6 @@
         if (!filtered.length) { cont.innerHTML = `<div class="col-span-1 sm:col-span-2 text-center py-10 bg-[#1c1c1e] rounded-2xl text-slate-500 text-xs border border-white/5 font-bold">ไม่พบรายการพระเครื่อง</div>`; return; }
 
         cont.innerHTML = filtered.map(s => {
-            const stat = s.status || 'AVAILABLE';
             const imgSrc = s.thumbUrl || s.imageUrl;
             const imgHtml = imgSrc ? `<img src="${esc(imgSrc)}" class="w-full h-36 object-cover rounded-xl mb-2.5 border border-white/5">` : `<div class="w-full h-36 bg-[#121212] rounded-xl mb-2.5 flex items-center justify-center text-slate-600"><i class="ph-fill ph-image text-3xl"></i></div>`;
             return `<div class="bg-[#1c1c1e] rounded-2xl p-3.5 border border-white/5 relative flex flex-col">${imgHtml}<div class="flex items-center gap-2 mb-1"><span class="bg-amber-400/10 text-amber-400 font-bold px-2 py-0.5 rounded text-[10px]">${esc(s.code)}</span><span class="text-[10px] text-slate-400">${esc(s.category)}</span></div><h4 class="font-bold text-white text-xs mb-3 truncate">${esc(s.name)}</h4><div class="mt-auto flex justify-between items-center bg-[#121212] p-2.5 rounded-xl border border-white/5 text-[11px]"><span class="text-slate-400">ราคาเปิดเช่า</span><span class="font-bold text-amber-400">${fmt(s.price)} ฿</span></div></div>`;
@@ -596,11 +583,8 @@
         const b = $('infoIconBox');
         if (type === 'success') { b.className = 'w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl'; b.innerHTML = '<i class="ph-fill ph-check-circle"></i>'; }
         else { b.className = 'w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl'; b.innerHTML = '<i class="ph-fill ph-warning"></i>'; }
-        $('generalInfoModal').classList.remove('hidden');
+        $('generalInfoModal').classList.add('hidden');
     }
-
-    function openDirectoryForPicking() {}
-    function openDirectoryModal() { alert('ฟังก์ชันทำเนียบพิมพ์พระ'); }
 
     selectWallet('TRANSFER');
     </script>
