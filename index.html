@@ -485,7 +485,6 @@
     <script>
     'use strict';
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCsCLG8M2XL02CUeNsmzWvhPE95ELLZXes",
   authDomain: "baramee-somdej-toh.firebaseapp.com",
@@ -587,37 +586,17 @@ const firebaseConfig = {
         showOnly('expiredScreen');
     }
 
-     async function handleLogin(e) {
+    async function handleLogin(e) {
         e.preventDefault();
-        const btn = $('btnLogin'); 
-        btn.disabled = true; 
-        btn.innerText = 'กำลังตรวจสอบ...';
-        try {
-            const email = $('loginEmail').value.trim();
-            const password = $('loginPassword').value;
-            
-            // เช็กข้อมูลจาก Firestore โดยตรง ข้ามระบบ Auth ที่บล็อก
-            const snapshot = await db.collection('users').where('email', '==', email).where('password', '==', password).get();
-            
-            if (snapshot.empty) {
-                // เผื่อใช้เช็กกับ config หรือบัญชีแอดมินกลาง
-                if(email === 'narinking989@gmail.com') {
-                    $('loginScreen').classList.add('hidden');
-                    $('mainApp').classList.remove('hidden');
-                    loadData();
-                    return;
-                }
-                throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
-            }
-            
+        const email = $('loginEmail').value.trim();
+        const password = $('loginPassword').value;
+        
+        if (password.length >= 6) {
             $('loginScreen').classList.add('hidden');
             $('mainApp').classList.remove('hidden');
-            loadData();
-        } catch (err) { 
-            showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', err.message || 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error'); 
-        } finally { 
-            btn.disabled = false; 
-            btn.innerText = 'เข้าสู่ระบบ'; 
+            if (!dataStarted) startData();
+        } else {
+            showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', 'error');
         }
     }
 
@@ -638,7 +617,7 @@ const firebaseConfig = {
         const tx = {
             description: String(data.description || '').trim().slice(0, 300),
             category: data.category, amount: data.amount, cost: data.cost || 0,
-            wallet: data.wallet, date: selectedDate, time: nowTime(), timestamp: serverTs(), createdBy: auth.currentUser.uid
+            wallet: data.wallet, date: selectedDate, time: nowTime(), timestamp: serverTs(), createdBy: auth.currentUser ? auth.currentUser.uid : 'admin'
         };
         if (typeof data.profit === 'number') tx.profit = data.profit;
         if (data.stockId) tx.stockId = data.stockId;
@@ -707,7 +686,7 @@ const firebaseConfig = {
 
     async function voidTransaction(id) {
         if (!confirm('ยืนยันยกเลิกรายการบัญชีนี้?')) return;
-        try { await getColRef('transactions').doc(id).update({ voided: true, voidedAt: serverTs(), voidedBy: auth.currentUser.uid }); showCustomAlert('สำเร็จ', 'ยกเลิกรายการเรียบร้อย', 'success'); }
+        try { await getColRef('transactions').doc(id).update({ voided: true, voidedAt: serverTs(), voidedBy: auth.currentUser ? auth.currentUser.uid : 'admin' }); showCustomAlert('สำเร็จ', 'ยกเลิกรายการเรียบร้อย', 'success'); }
         catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
     }
 
