@@ -27,7 +27,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Pridi:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -81,25 +80,8 @@
         <p class="text-slate-600 text-xs mt-8 font-medium">Powered by PSU Siam Pro</p>
     </div>
 
-    <!-- Expired Screen -->
-    <div id="expiredScreen" class="fixed inset-0 bg-[#121212]/95 backdrop-blur-md z-[150] flex flex-col justify-center items-center p-6 hidden">
-        <div class="bg-[#1c1c1e] p-8 rounded-[32px] border border-white/10 shadow-2xl w-full max-w-sm text-center">
-            <div class="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-rose-500/20">
-                <i class="ph-fill ph-warning-circle text-4xl text-rose-500"></i>
-            </div>
-            <h1 id="expiredTitle" class="text-2xl font-bold heading-font text-white mb-2">สิ้นสุดระยะเวลาใช้งาน</h1>
-            <p id="expiredDesc" class="text-sm text-slate-400 mb-6 leading-relaxed"></p>
-            <button onclick="handleLogout()" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 rounded-2xl transition-all">ออกจากระบบ</button>
-        </div>
-    </div>
-
     <!-- Main App Container -->
     <div id="mainApp" class="hidden">
-        <div id="expirationBanner" class="hidden bg-rose-600 text-white text-center py-2 text-xs font-bold shadow-md w-full z-50">
-            ⚠️ แจ้งเตือน: สิทธิ์ใช้งานจะสิ้นสุดในอีก <span id="expireDaysText"></span> วัน (<span id="expireDateText"></span>)
-        </div>
-
-        <!-- Header พรีเมียม -->
         <header class="px-6 pt-6 pb-6 bg-[#18181b] border-b border-white/5 flex justify-between items-center relative z-20">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md text-slate-950 text-xl font-bold">
@@ -110,26 +92,23 @@
                     <h1 class="text-base font-bold text-white heading-font">บารมีสมเด็จโต</h1>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="handleLogout()" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-all" title="ออกจากระบบ"><i class="ph-bold ph-sign-out text-lg"></i></button>
-            </div>
+            <button onclick="handleLogout()" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-all"><i class="ph-bold ph-sign-out text-lg"></i></button>
         </header>
 
         <div class="px-6 py-4 bg-[#18181b]/50 border-b border-white/5 flex items-center justify-between">
-            <span class="text-xs text-slate-400 font-medium flex items-center gap-1.5"><i class="ph-bold ph-calendar text-amber-400"></i> เลือกวันที่ดำเนินงาน</span>
+            <span class="text-xs text-slate-400 font-medium flex items-center gap-1.5"><i class="ph-bold ph-calendar text-amber-400"></i> วันที่ดำเนินงาน</span>
             <input type="date" id="appDatePicker" onchange="changeAppDate(this.value)" class="bg-[#1c1c1e] border border-white/10 rounded-xl px-3 py-1.5 text-xs outline-none date-picker-dark" />
         </div>
 
-        <!-- ================= Ledger Tab ================= -->
+        <!-- Ledger Tab -->
         <main id="ledgerWorkspace" class="px-6 pt-6 space-y-6 max-w-xl mx-auto">
             <div class="bg-gradient-to-br from-[#1c1c1e] to-[#262629] p-6 rounded-[28px] border border-white/10 shadow-xl relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-5 text-9xl text-amber-400"><i class="ph-fill ph-bank"></i></div>
-                <div class="flex justify-between items-center mb-2 relative z-10">
+                <div class="flex justify-between items-center mb-2">
                     <p class="text-xs text-slate-400 font-medium flex items-center gap-1.5"><i class="ph-bold ph-chart-pie-slice text-amber-400"></i> ทรัพย์สินรวมสุทธิ</p>
                     <span class="text-[10px] font-bold bg-amber-400/10 text-amber-400 px-2.5 py-1 rounded-full border border-amber-400/20">เจ้าของร้าน</span>
                 </div>
-                <h2 id="totalAssetValue" class="text-3xl font-bold tracking-tight text-white mb-5 relative z-10">0 ฿</h2>
-                <div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4 text-xs relative z-10">
+                <h2 id="totalAssetValue" class="text-3xl font-bold tracking-tight text-white mb-5">0 ฿</h2>
+                <div class="grid grid-cols-2 gap-3 border-t border-white/10 pt-4 text-xs">
                     <div><p class="text-slate-400 mb-1">ยอดโอน</p><p id="totalTransferValue" class="font-bold text-sm text-white">0 ฿</p></div>
                     <div><p class="text-slate-400 mb-1">เงินสด</p><p id="totalCashValue" class="font-bold text-sm text-white">0 ฿</p></div>
                 </div>
@@ -161,16 +140,13 @@
                 </div>
                 <div class="flex justify-between items-center pt-2">
                     <h3 class="font-bold text-sm text-white flex items-center gap-2"><i class="ph-fill ph-book-bookmark text-amber-400"></i> รายการบัญชี</h3>
-                    <div class="flex gap-2 items-center">
-                        <button onclick="openExportModal()" class="bg-white/5 hover:bg-white/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1"><i class="ph-bold ph-file-csv"></i> CSV</button>
-                        <span id="txCountBadge" class="text-[11px] bg-[#1c1c1e] text-slate-400 px-2.5 py-1.5 rounded-xl border border-white/10">0 รายการ</span>
-                    </div>
+                    <span id="txCountBadge" class="text-[11px] bg-[#1c1c1e] text-slate-400 px-2.5 py-1.5 rounded-xl border border-white/10">0 รายการ</span>
                 </div>
                 <div id="txContainer" class="space-y-2.5"></div>
             </div>
         </main>
 
-        <!-- ================= Stock Workspace ================= -->
+        <!-- Stock Workspace -->
         <div id="stockWorkspace" class="hidden px-6 pt-6 space-y-4 max-w-xl mx-auto">
             <div class="bg-gradient-to-br from-[#1c1c1e] to-[#262629] p-6 rounded-[28px] border border-white/10 shadow-xl flex justify-between items-center">
                 <div>
@@ -179,9 +155,7 @@
                     <p class="text-xs text-slate-400 mt-1">มูลค่ารวม (<span id="totalStockCount">0 องค์</span>)</p>
                     <p id="totalStockValue" class="text-2xl font-bold text-amber-400 mt-0.5">0 ฿</p>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <button onclick="openAddStockModal()" class="bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:opacity-90 transition-all flex items-center gap-1.5"><i class="ph-bold ph-plus"></i> เพิ่มพระ</button>
-                </div>
+                <button onclick="openAddStockModal()" class="bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-bold shadow-md hover:opacity-90 transition-all flex items-center gap-1.5"><i class="ph-bold ph-plus"></i> เพิ่มพระ</button>
             </div>
 
             <div class="flex overflow-x-auto gap-2 py-1 hide-scrollbar">
@@ -208,88 +182,57 @@
         </nav>
     </div>
 
-    <!-- ================= Modals ================= -->
-    <div id="exportCsvModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
-        <div class="bg-[#1c1c1e] border border-white/10 w-full max-w-sm rounded-[28px] p-6 relative">
-            <button onclick="closeExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-white/5 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
-            <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2"><i class="ph-fill ph-file-csv text-emerald-400 text-2xl"></i> ดาวน์โหลดรายงาน CSV</h3>
-            <p class="text-xs text-slate-400 mb-4">เลือกช่วงวันที่ต้องการดึงรายงานบัญชี</p>
-            <form onsubmit="handleExportCsv(event)" class="space-y-3 text-xs">
-                <div><label class="block font-bold text-slate-400 mb-1">เริ่มต้นวันที่</label><input type="date" id="exportStartDate" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-white outline-none"></div>
-                <div><label class="block font-bold text-slate-400 mb-1">ถึงวันที่</label><input type="date" id="exportEndDate" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-white outline-none"></div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl mt-3 transition-all">ดาวน์โหลดไฟล์</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- Modals -->
     <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden">
         <div class="bg-[#1c1c1e] border border-white/10 w-full max-w-sm rounded-[28px] p-6 relative max-h-[90vh] overflow-y-auto text-xs">
             <button onclick="closeAddModal()" class="absolute top-4 right-4 text-slate-400 bg-white/5 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
             <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="ph-fill ph-plus-circle text-amber-400 text-2xl"></i> บันทึกรับ/จ่าย</h3>
             <form id="txForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
-                <div>
-                    <label class="block font-bold text-slate-400 mb-1">ชื่อรายการ</label>
-                    <input type="text" id="formDesc" required maxlength="200" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-amber-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-400 mb-1">ประเภทรายการ</label>
-                    <select id="formCategory" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none">
-                        <option value="SELL">ปล่อยเช่าพระ (รายรับ)</option>
-                        <option value="BUY">เช่าเข้าพระ (รายจ่าย)</option>
-                        <option value="OTHER_INCOME">รายรับอื่นๆ</option>
-                        <option value="OTHER_EXPENSE">รายจ่ายอื่นๆ</option>
-                    </select>
-                </div>
+                <div><label class="block font-bold text-slate-400 mb-1">ชื่อรายการ</label><input type="text" id="formDesc" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none"></div>
+                <div><label class="block font-bold text-slate-400 mb-1">ประเภท</label><select id="formCategory" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none"><option value="SELL">ปล่อยเช่า</option><option value="BUY">เช่าเข้า</option><option value="OTHER_INCOME">รับอื่นๆ</option><option value="OTHER_EXPENSE">จ่ายอื่นๆ</option></select></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block font-bold text-slate-400 mb-1">รับ/จ่าย (บาท)</label><input type="number" id="formAmount" required min="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none font-bold"></div>
-                    <div><label class="block font-bold text-slate-400 mb-1">ราคาทุน</label><input type="number" id="formCost" required min="0" value="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-rose-400 outline-none font-bold"></div>
+                    <div><label class="block font-bold text-slate-400 mb-1">จำนวนเงิน</label><input type="number" id="formAmount" required min="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white font-bold outline-none"></div>
+                    <div><label class="block font-bold text-slate-400 mb-1">ราคาทุน</label><input type="number" id="formCost" required min="0" value="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-rose-400 font-bold outline-none"></div>
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-400 mb-1">ช่องทางชำระ</label>
+                    <label class="block font-bold text-slate-400 mb-1">ช่องทาง</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="btnWalletTransfer" onclick="selectWallet('TRANSFER')" class="py-2.5 rounded-xl border font-bold">โอน</button>
-                        <button type="button" id="btnWalletCash" onclick="selectWallet('CASH')" class="py-2.5 rounded-xl border font-bold">เงินสด</button>
+                        <button type="button" id="btnWalletTransfer" onclick="selectWallet('TRANSFER')" class="py-2.5 rounded-xl border border-amber-400 text-amber-400 bg-amber-400/10 font-bold">โอน</button>
+                        <button type="button" id="btnWalletCash" onclick="selectWallet('CASH')" class="py-2.5 rounded-xl border border-white/10 text-slate-400 bg-[#121212] font-bold">เงินสด</button>
                     </div>
                 </div>
-                <button type="submit" id="btnSubmitTx" class="w-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-bold py-3.5 rounded-xl mt-3 transition-all">บันทึกข้อมูล</button>
+                <button type="submit" class="w-full bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl mt-3">บันทึกข้อมูล</button>
             </form>
         </div>
     </div>
 
+    <!-- Modal เพิ่มพระ (พร้อมระบบรันรหัสอัตโนมัติ) -->
     <div id="addStockModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[80] flex items-center justify-center p-4 hidden">
         <div class="bg-[#1c1c1e] border border-white/10 w-full max-w-sm rounded-[28px] p-6 relative max-h-[90vh] overflow-y-auto text-xs">
             <button onclick="closeAddStockModal()" class="absolute top-4 right-4 text-slate-400 bg-white/5 p-2 rounded-full"><i class="ph-bold ph-x"></i></button>
             <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="ph-fill ph-package text-amber-400 text-2xl"></i> เพิ่มพระเข้าตู้</h3>
             <form id="stockForm" onsubmit="handleManualStockSubmit(event)" class="space-y-3">
-                <div><label class="block font-bold text-slate-400 mb-1">อัปโหลดรูปภาพ</label><input type="file" id="stockImage" accept="image/*" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-slate-300 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-400 file:text-slate-950"></div>
+                <div><label class="block font-bold text-slate-400 mb-1">รูปภาพ</label><input type="file" id="stockImage" accept="image/*" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-slate-300"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block font-bold text-slate-400 mb-1">รหัสพระ</label><input type="text" id="stockCode" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white uppercase outline-none"></div>
-                    <div><label class="block font-bold text-slate-400 mb-1">หมวดหมู่</label><input type="text" id="stockCategory" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none"></div>
+                    <div>
+                        <label class="block font-bold text-slate-400 mb-1">รหัสพระ (รันให้อัตโนมัติ)</label>
+                        <input type="text" id="stockCode" required readonly class="w-full bg-[#121212]/50 border border-white/10 rounded-xl px-3 py-2.5 text-amber-400 font-bold uppercase outline-none cursor-not-allowed" title="ระบบรันรหัสอัตโนมัติไม่ซ้ำกัน">
+                    </div>
+                    <div><label class="block font-bold text-slate-400 mb-1">หมวดหมู่</label><input type="text" id="stockCategory" required placeholder="เช่น สมเด็จ, หลวงปู่ทวด" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none"></div>
                 </div>
                 <div><label class="block font-bold text-slate-400 mb-1">ชื่อพระเครื่อง</label><input type="text" id="stockName" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none"></div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="block font-bold text-slate-400 mb-1">ราคาทุน</label><input type="number" id="stockCost" required min="0" value="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-rose-400 font-bold outline-none"></div>
                     <div><label class="block font-bold text-slate-400 mb-1">ราคาเปิดเช่า</label><input type="number" id="stockPrice" required min="0" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2.5 text-emerald-400 font-bold outline-none"></div>
                 </div>
-                <button type="submit" id="btnSubmitStock" class="w-full bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-bold py-3.5 rounded-xl mt-3 transition-all">บันทึกเข้าตู้พระ</button>
+                <button type="submit" class="w-full bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl mt-3">บันทึกเข้าตู้พระ</button>
             </form>
         </div>
     </div>
 
-    <!-- General Info Modal -->
-    <div id="generalInfoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4 hidden">
-        <div class="bg-[#1c1c1e] border border-white/10 w-full max-w-xs rounded-[28px] p-6 text-center shadow-2xl">
-            <div id="infoIconBox" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"></div>
-            <h3 id="infoTitle" class="text-lg font-bold text-white mb-1"></h3>
-            <p id="infoDesc" class="text-xs text-slate-400 mb-5 leading-relaxed"></p>
-            <button onclick="$('generalInfoModal').classList.add('hidden')" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-all text-xs">ตกลง</button>
-        </div>
-    </div>
-
-    <!-- ================= Script Logic ================= -->
+    <!-- Script Logic -->
     <script>
     'use strict';
-
     const firebaseConfig = {
       apiKey: "AIzaSyCsCLG8M2XL02CUeNsmzWvhPE95ELLZXes",
       authDomain: "baramee-somdej-toh.firebaseapp.com",
@@ -303,136 +246,60 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
     const storage = firebase.storage();
-    const serverTs = () => firebase.firestore.FieldValue.serverTimestamp();
-    function getColRef(name) { return db.collection(name); }
-
-    const WARN_BEFORE_DAYS = 7;
-    const MAX_AMOUNT = 100000000;
 
     function $(id) { return document.getElementById(id); }
-    function esc(str) { return String(str ?? '').replace(/[&<>"'`]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' }[c])); }
     function fmt(v) { return Number(v || 0).toLocaleString('th-TH'); }
-    function localDateStr(d = new Date()) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
-    function nowTime() { return new Date().toLocaleTimeString('th-TH', { hour12: false }); }
-    function thaiDate(d) { return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); }
-    function checkMoney(n, label) { if (!Number.isFinite(n) || n < 0 || n > MAX_AMOUNT) throw new Error(`${label} ไม่ถูกต้อง`); return n; }
-    function tsMillis(x) { 
-        if (!x) return Date.now();
-        if (typeof x.toMillis === 'function') return x.toMillis();
-        if (typeof x.seconds === 'number') return x.seconds * 1000;
-        return Date.now(); 
-    }
+    function localDateStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 
     let allTransactions = [], allStock = [];
-    let currentActiveTab = 'ledger', selectedDate = localDateStr();
-    let currentStockTab = 'ALL', searchQuery = '';
-    let currentWallet = 'TRANSFER';
-    let dbListeners = [], dataStarted = false;
-    let license = null, licenseUnsub = null, licenseTimer = null, serverDenied = false;
-
-    const MODAL_IDS = ['exportCsvModal', 'addModal', 'addStockModal', 'generalInfoModal'];
-    function closeAllModals() { MODAL_IDS.forEach(id => $(id).classList.add('hidden')); }
-    function showOnly(screenId) { ['loginScreen', 'loadingScreen', 'expiredScreen', 'mainApp'].forEach(id => $(id).classList.toggle('hidden', id !== screenId)); }
+    let currentActiveTab = 'ledger', selectedDate = localDateStr(), currentStockTab = 'ALL', searchQuery = '', currentWallet = 'TRANSFER';
 
     auth.onAuthStateChanged(user => {
-        stopLicenseWatch(); stopData(); closeAllModals();
         if (!user) {
-            allTransactions = []; allStock = []; license = null;
-            $('loginEmail').value = ''; $('loginPassword').value = '';
-            showOnly('loginScreen'); return;
-        }
-        showOnly('loadingScreen');
-        licenseUnsub = db.collection('config').doc('license').onSnapshot({ includeMetadataChanges: true }, snap => {
-            if (!snap.exists && snap.metadata.fromCache) return;
-            serverDenied = false;
-            if (!snap.exists) { license = null; lockApp('denied'); return; }
-            license = snap.data(); evaluateLicense();
-        }, err => { license = null; lockApp('denied'); });
-        licenseTimer = setInterval(evaluateLicense, 60 * 1000);
-    });
-
-    function stopLicenseWatch() { if (licenseUnsub) licenseUnsub(); licenseUnsub = null; if (licenseTimer) clearInterval(licenseTimer); licenseTimer = null; }
-
-    function evaluateLicense() {
-        if (!license || serverDenied) return;
-        const exp = (license.expiresAt && typeof license.expiresAt.toDate === 'function') ? license.expiresAt.toDate() : null;
-        if (!exp) { lockApp('denied'); return; }
-        const msLeft = exp.getTime() - Date.now();
-        if (msLeft <= 0) { lockApp('expired', exp); return; }
-        unlockApp(exp, msLeft);
-    }
-
-    function unlockApp(exp, msLeft) {
-        const daysLeft = Math.ceil(msLeft / 86400000);
-        const showBanner = daysLeft <= WARN_BEFORE_DAYS;
-        $('expirationBanner').classList.toggle('hidden', !showBanner);
-        $('expireDaysText').innerText = daysLeft;
-        $('expireDateText').innerText = 'ใช้ได้ถึง ' + thaiDate(exp);
-        if ($('mainApp').classList.contains('hidden')) {
-            showOnly('mainApp'); $('appDatePicker').value = selectedDate; switchTab(currentActiveTab);
-        }
-        if (!dataStarted) startData();
-    }
-
-    function lockApp(reason, exp) {
-        stopData(); closeAllModals();
-        if (reason === 'expired') {
-            $('expiredTitle').innerText = 'สิ้นสุดระยะเวลาใช้งาน';
-            $('expiredDesc').innerText = `สิทธิ์ใช้งานสิ้นสุดเมื่อ ${thaiDate(exp)} กรุณาติดต่อผู้พัฒนาครับ`;
+            $('loadingScreen').classList.add('hidden');
+            $('loginScreen').classList.remove('hidden');
+            $('mainApp').classList.add('hidden');
         } else {
-            $('expiredTitle').innerText = 'ไม่สามารถเข้าใช้งานได้';
-            $('expiredDesc').innerText = 'บัญชีนี้ยังไม่ได้รับสิทธิ์ หรือถูกระงับชั่วคราว';
+            $('loginScreen').classList.add('hidden');
+            $('loadingScreen').classList.add('hidden');
+            $('mainApp').classList.remove('hidden');
+            $('appDatePicker').value = selectedDate;
+            startDataListeners();
+            switchTab('ledger');
         }
-        showOnly('expiredScreen');
-    }
+    });
 
     async function handleLogin(e) {
         e.preventDefault();
-        const btn = $('btnLogin'); btn.disabled = true; btn.innerText = 'กำลังตรวจสอบ...';
         try {
             await auth.signInWithEmailAndPassword($('loginEmail').value.trim(), $('loginPassword').value);
-        } catch (err) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
-        finally { btn.disabled = false; btn.innerText = 'เข้าสู่ระบบ'; }
+        } catch (err) { alert('อีเมลหรือรหัสผ่านไม่ถูกต้อง'); }
     }
 
-    function handleLogout() { if (confirm('ต้องการออกจากระบบใช่หรือไม่?')) auth.signOut(); }
-    function handleDbError(err) { if (err && err.code === 'permission-denied') { serverDenied = true; lockApp('denied'); } }
+    function handleLogout() { auth.signOut(); }
 
-    function startData() {
-        if (dataStarted) return; dataStarted = true;
-        dbListeners.push(getColRef('transactions').onSnapshot(snap => { allTransactions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'ledger') renderAll(); }, handleDbError));
-        dbListeners.push(getColRef('amulet_stock').onSnapshot(snap => { allStock = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'stock') renderStock(); }, handleDbError));
+    function startDataListeners() {
+        db.collection('transactions').onSnapshot(snap => {
+            allTransactions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if (currentActiveTab === 'ledger') renderAll();
+        });
+        db.collection('amulet_stock').onSnapshot(snap => {
+            allStock = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if (currentActiveTab === 'stock') renderStock();
+        });
     }
 
-    function stopData() { dbListeners.forEach(unsub => { try { unsub(); } catch (_) {} }); dbListeners = []; dataStarted = false; }
-
-    function buildTx(data) {
-        return {
-            description: String(data.description || '').trim().slice(0, 300),
-            category: data.category, amount: data.amount, cost: data.cost || 0,
-            wallet: data.wallet, date: selectedDate, time: nowTime(), timestamp: serverTs(), createdBy: auth.currentUser.uid,
-            ...(typeof data.profit === 'number' ? { profit: data.profit } : {}),
-            ...(data.stockId ? { stockId: data.stockId } : {})
-        };
+    function switchTab(tab) {
+        currentActiveTab = tab;
+        $('ledgerWorkspace').classList.toggle('hidden', tab !== 'ledger');
+        $('stockWorkspace').classList.toggle('hidden', tab !== 'stock');
+        $('navTab_ledger').className = tab === 'ledger' ? 'flex flex-col items-center justify-center text-amber-400 w-20' : 'flex flex-col items-center justify-center text-slate-400 w-20';
+        $('navTab_stock').className = tab === 'stock' ? 'flex flex-col items-center justify-center text-amber-400 w-20' : 'flex flex-col items-center justify-center text-slate-400 w-20';
+        if (tab === 'ledger') renderAll(); else renderStock();
     }
 
-    const CAT_NAMES = { SELL: 'ปล่อยเช่า', BUY: 'เช่าเข้า', INSTALLMENT: 'ค่างวด/มัดจำ', OTHER_INCOME: 'รับอื่นๆ', OTHER_EXPENSE: 'จ่ายอื่นๆ' };
+    function changeAppDate(val) { selectedDate = val; renderAll(); }
     function isIncome(cat) { return ['SELL', 'OTHER_INCOME', 'INSTALLMENT'].includes(cat); }
-    function txProfit(tx) {
-        if (tx.category !== 'SELL') return 0;
-        if (typeof tx.profit === 'number') return tx.profit;
-        return Number(tx.amount || 0) - Number(tx.cost || 0);
-    }
-
-    function changeAppDate(val) { if (!val) return; selectedDate = val; renderAll(); }
-
-    function switchTab(tabId) {
-        currentActiveTab = tabId;
-        ['ledger', 'stock'].forEach(id => $(`${id}Workspace`).classList.toggle('hidden', id !== tabId));
-        ['ledger', 'stock'].forEach(id => { $(`navTab_${id}`).className = id === tabId ? 'flex flex-col items-center justify-center text-amber-400 w-20 transition-all' : 'flex flex-col items-center justify-center text-slate-400 hover:text-amber-400 w-20 transition-all'; });
-        if (tabId === 'ledger') renderAll(); else renderStock();
-        window.scrollTo(0, 0);
-    }
 
     function renderAll() {
         let tC = 0, tT = 0, dI = 0, dE = 0, dP = 0;
@@ -440,9 +307,11 @@
         active.forEach(tx => {
             const inc = isIncome(tx.category), amt = Number(tx.amount || 0);
             if (tx.wallet === 'CASH') tC += inc ? amt : -amt; else tT += inc ? amt : -amt;
-            if (tx.date === selectedDate) { if (inc) dI += amt; else dE += amt; dP += txProfit(tx); }
+            if (tx.date === selectedDate) {
+                if (inc) dI += amt; else dE += amt;
+                if (tx.category === 'SELL') dP += (Number(tx.profit) || (amt - Number(tx.cost || 0)));
+            }
         });
-
         $('totalAssetValue').innerText = fmt(tC + tT) + ' ฿';
         $('totalTransferValue').innerText = fmt(tT) + ' ฿';
         $('totalCashValue').innerText = fmt(tC) + ' ฿';
@@ -450,52 +319,42 @@
         $('dailyIncomeText').innerText = fmt(dI) + ' ฿';
         $('dailyExpenseText').innerText = fmt(dE) + ' ฿';
 
-        const sq = (searchQuery || '').toLowerCase();
-        const list = active.filter(tx => tx.date === selectedDate && (String(tx.description || '').toLowerCase().includes(sq) || String(CAT_NAMES[tx.category] || '').toLowerCase().includes(sq)))
-            .sort((a, b) => tsMillis(b.timestamp) - tsMillis(a.timestamp));
-
+        const sq = searchQuery.toLowerCase();
+        const list = active.filter(tx => tx.date === selectedDate && String(tx.description || '').toLowerCase().includes(sq));
         $('txCountBadge').innerText = `${list.length} รายการ`;
-        const cont = $('txContainer');
-        if (!list.length) {
-            cont.innerHTML = `<div class="text-center py-10 bg-[#1c1c1e] rounded-2xl border border-white/5 text-slate-500 text-xs font-bold"><i class="ph-fill ph-receipt text-3xl mb-1 text-slate-600"></i><br>ไม่มีรายการบัญชีในวันนี้</div>`;
-            return;
-        }
-        cont.innerHTML = list.map(tx => {
+        $('txContainer').innerHTML = list.length ? list.map(tx => {
             const inc = isIncome(tx.category);
             return `<div class="bg-[#1c1c1e] p-3.5 rounded-2xl border border-white/5 flex items-center justify-between gap-3 ${inc ? 'border-l-4 border-l-emerald-400' : 'border-l-4 border-l-rose-400'}">
-                <div class="min-w-0"><h4 class="font-bold text-white text-xs mb-1 truncate">${esc(tx.description)}</h4>
-                <div class="flex items-center gap-2 text-[10px] text-slate-400"><span class="bg-white/5 px-2 py-0.5 rounded text-slate-300">${esc(CAT_NAMES[tx.category] || tx.category)}</span><span>${tx.wallet === 'CASH' ? 'เงินสด' : 'โอน'}</span><span>${esc(tx.time || '')}</span></div></div>
-                <div class="text-right shrink-0"><p class="font-bold text-sm ${inc ? 'text-emerald-400' : 'text-white'}">${inc ? '+' : '-'}${fmt(tx.amount)}</p>
-                <button onclick="voidTransaction('${tx.id}')" class="text-slate-600 hover:text-rose-400 text-xs mt-1"><i class="ph-bold ph-trash"></i></button></div>
-            </div>`;
-        }).join('');
+                <div><h4 class="font-bold text-white text-xs mb-1">${tx.description}</h4><p class="text-[10px] text-slate-400">${tx.wallet === 'CASH' ? 'เงินสด' : 'โอน'} • ${tx.time || ''}</p></div>
+                <div class="text-right"><p class="font-bold text-sm ${inc ? 'text-emerald-400' : 'text-white'}">${inc ? '+' : '-'}${fmt(tx.amount)}</p>
+                <button onclick="voidTx('${tx.id}')" class="text-slate-500 hover:text-rose-400 text-xs mt-1"><i class="ph-bold ph-trash"></i></button></div></div>`;
+        }).join('') : `<div class="text-center py-10 text-slate-500 text-xs font-bold">ไม่มีรายการบัญชีวันนี้</div>`;
     }
 
-    async function voidTransaction(id) {
-        if (!confirm('ยืนยันยกเลิกรายการนี้?')) return;
-        try { await getColRef('transactions').doc(id).update({ voided: true }); showCustomAlert('สำเร็จ', 'ยกเลิกรายการเรียบร้อย', 'success'); }
-        catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
+    async function voidTx(id) {
+        if (confirm('ยืนยันยกเลิกรายการนี้?')) await db.collection('transactions').doc(id).update({ voided: true });
     }
 
     function handleSearch(v) { searchQuery = v; renderAll(); }
 
-    const W_STYLE = { TRANSFER: 'py-2.5 rounded-xl border-2 border-amber-400 text-amber-400 bg-amber-400/10 text-xs font-bold transition-all', CASH: 'py-2.5 rounded-xl border-2 border-emerald-400 text-emerald-400 bg-emerald-400/10 text-xs font-bold transition-all', OFF: 'py-2.5 rounded-xl border border-white/10 text-slate-400 bg-[#121212] text-xs font-bold transition-all' };
-    function selectWallet(t) { currentWallet = t; $('btnWalletTransfer').className = t === 'TRANSFER' ? W_STYLE.TRANSFER : W_STYLE.OFF; $('btnWalletCash').className = t === 'CASH' ? W_STYLE.CASH : W_STYLE.OFF; }
+    function selectWallet(t) {
+        currentWallet = t;
+        $('btnWalletTransfer').className = t === 'TRANSFER' ? 'py-2.5 rounded-xl border border-amber-400 text-amber-400 bg-amber-400/10 font-bold' : 'py-2.5 rounded-xl border border-white/10 text-slate-400 bg-[#121212] font-bold';
+        $('btnWalletCash').className = t === 'CASH' ? 'py-2.5 rounded-xl border border-emerald-400 text-emerald-400 bg-emerald-400/10 font-bold' : 'py-2.5 rounded-xl border border-white/10 text-slate-400 bg-[#121212] font-bold';
+    }
 
     function openAddModal() { $('addModal').classList.remove('hidden'); }
-    function closeAddModal() { $('addModal').classList.add('hidden'); $('txForm').reset(); selectWallet('TRANSFER'); }
+    function closeAddModal() { $('addModal').classList.add('hidden'); $('txForm').reset(); }
 
     async function handleFormSubmit(e) {
         e.preventDefault();
         try {
-            const cat = $('formCategory').value, desc = $('formDesc').value.trim();
-            const amount = checkMoney(Number($('formAmount').value), 'จำนวนเงิน');
-            const cost = cat === 'SELL' ? checkMoney(Number($('formCost').value || 0), 'ราคาทุน') : 0;
-            const txData = { description: desc, category: cat, amount, cost, wallet: currentWallet };
-            if (cat === 'SELL') txData.profit = amount - cost;
-            await getColRef('transactions').add(buildTx(txData));
-            closeAddModal(); showCustomAlert('สำเร็จ', 'บันทึกบัญชีเรียบร้อย', 'success');
-        } catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
+            const cat = $('formCategory').value, amount = Number($('formAmount').value), cost = Number($('formCost').value || 0);
+            const data = { description: $('formDesc').value.trim(), category: cat, amount, cost, wallet: currentWallet, date: selectedDate, time: new Date().toLocaleTimeString('th-TH', { hour12: false }), timestamp: firebase.firestore.FieldValue.serverTimestamp(), createdBy: auth.currentUser.uid };
+            if (cat === 'SELL') data.profit = amount - cost;
+            await db.collection('transactions').add(data);
+            closeAddModal();
+        } catch (err) { alert(err.message); }
     }
 
     function setStockTab(tab) {
@@ -512,81 +371,70 @@
             const stat = s.status || 'AVAILABLE';
             if (currentStockTab === 'ALL' && stat === 'SOLD') return false;
             if (currentStockTab !== 'ALL' && stat !== currentStockTab) return false;
-            return (String(s.name || '').toLowerCase().includes(q) || String(s.code || '').toLowerCase().includes(q));
+            return String(s.name || '').toLowerCase().includes(q) || String(s.code || '').toLowerCase().includes(q);
         });
+        let total = 0; if (currentStockTab !== 'SOLD') filtered.forEach(s => total += Number(s.price || 0));
+        $('totalStockCount').innerText = `${filtered.length} องค์`;
+        $('totalStockValue').innerText = fmt(total) + ' ฿';
 
-        let totalValue = 0; if (currentStockTab !== 'SOLD') filtered.forEach(s => { totalValue += Number(s.price || 0); });
-        $('totalStockCount').innerText = `${filtered.length} องค์`; $('totalStockValue').innerText = `${fmt(totalValue)} ฿`;
-
-        const cont = $('stockContainer');
-        if (!filtered.length) { cont.innerHTML = `<div class="col-span-1 sm:col-span-2 text-center py-10 bg-[#1c1c1e] rounded-2xl text-slate-500 text-xs border border-white/5 font-bold">ไม่พบรายการพระเครื่อง</div>`; return; }
-
-        cont.innerHTML = filtered.map(s => {
-            const imgSrc = s.thumbUrl || s.imageUrl;
-            const imgHtml = imgSrc ? `<img src="${esc(imgSrc)}" class="w-full h-36 object-cover rounded-xl mb-2.5 border border-white/5">` : `<div class="w-full h-36 bg-[#121212] rounded-xl mb-2.5 flex items-center justify-center text-slate-600"><i class="ph-fill ph-image text-3xl"></i></div>`;
-            return `<div class="bg-[#1c1c1e] rounded-2xl p-3.5 border border-white/5 relative flex flex-col">${imgHtml}<div class="flex items-center gap-2 mb-1"><span class="bg-amber-400/10 text-amber-400 font-bold px-2 py-0.5 rounded text-[10px]">${esc(s.code)}</span><span class="text-[10px] text-slate-400">${esc(s.category)}</span></div><h4 class="font-bold text-white text-xs mb-3 truncate">${esc(s.name)}</h4><div class="mt-auto flex justify-between items-center bg-[#121212] p-2.5 rounded-xl border border-white/5 text-[11px]"><span class="text-slate-400">ราคาเปิดเช่า</span><span class="font-bold text-amber-400">${fmt(s.price)} ฿</span></div></div>`;
-        }).join('');
+        $('stockContainer').innerHTML = filtered.length ? filtered.map(s => `
+            <div class="bg-[#1c1c1e] rounded-2xl p-3.5 border border-white/5">
+                <div class="w-full h-36 bg-[#121212] rounded-xl mb-2.5 flex items-center justify-center text-slate-600 overflow-hidden">
+                    ${s.thumbUrl || s.imageUrl ? `<img src="${s.thumbUrl || s.imageUrl}" class="w-full h-full object-cover">` : '<i class="ph-fill ph-image text-3xl"></i>'}
+                </div>
+                <div class="flex items-center gap-2 mb-1"><span class="bg-amber-400/10 text-amber-400 font-bold px-2 py-0.5 rounded text-[10px]">${s.code || ''}</span><span class="text-[10px] text-slate-400">${s.category || ''}</span></div>
+                <h4 class="font-bold text-white text-xs mb-3 truncate">${s.name || ''}</h4>
+                <div class="flex justify-between items-center bg-[#121212] p-2.5 rounded-xl border border-white/5 text-[11px]"><span class="text-slate-400">ราคาเปิดเช่า</span><span class="font-bold text-amber-400">${fmt(s.price)} ฿</span></div>
+            </div>`).join('') : `<div class="col-span-1 sm:col-span-2 text-center py-10 text-slate-500 text-xs font-bold">ไม่พบรายการพระเครื่อง</div>`;
     }
 
-    async function uploadImage(file) {
-        const ts = Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-        const [fullFile, thumbFile] = await Promise.all([
-            imageCompression(file, { maxSizeMB: 0.8, maxWidthOrHeight: 1200, useWebWorker: false, fileType: 'image/jpeg' }),
-            imageCompression(file, { maxSizeMB: 0.08, maxWidthOrHeight: 400, useWebWorker: false, fileType: 'image/jpeg' })
-        ]);
-        const fullRef = storage.ref(`amulets/${ts}_full.jpg`), thumbRef = storage.ref(`amulets/${ts}_thumb.jpg`);
-        await Promise.all([fullRef.put(fullFile), thumbRef.put(thumbFile)]);
-        return { imageUrl: await fullRef.getDownloadURL(), thumbUrl: await thumbRef.getDownloadURL() };
+    // ฟังก์ชันคำนวณรหัสพระอัตโนมัติไม่ซ้ำ (รันต่อจากรหัสเดิมที่เป็นตัวเลขสูงสุด หรือเริ่มจาก AM001)
+    function generateNextStockCode() {
+        let maxNum = 0;
+        allStock.forEach(s => {
+            if (s.code) {
+                const match = s.code.match(/(\d+)$/);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > maxNum) maxNum = num;
+                }
+            }
+        });
+        const nextNum = maxNum + 1;
+        return 'AM' + String(nextNum).padStart(3, '0');
     }
 
-    function openAddStockModal() { $('addStockModal').classList.remove('hidden'); }
+    function openAddStockModal() {
+        $('stockCode').value = generateNextStockCode();
+        $('addStockModal').classList.remove('hidden');
+    }
     function closeAddStockModal() { $('addStockModal').classList.add('hidden'); $('stockForm').reset(); }
 
     async function handleManualStockSubmit(e) {
         e.preventDefault();
-        const btn = $('btnSubmitStock'); btn.disabled = true;
         try {
-            const code = $('stockCode').value.trim().toUpperCase(), name = $('stockName').value.trim(), category = $('stockCategory').value.trim();
-            const cost = checkMoney(Number($('stockCost').value), 'ราคาทุน'), price = checkMoney(Number($('stockPrice').value), 'ราคาเปิดเช่า');
+            const file = $('stockImage').files[0];
             let imgData = {};
-            const fileInput = $('stockImage'); if (fileInput.files.length > 0) imgData = await uploadImage(fileInput.files[0]);
-
-            await getColRef('amulet_stock').add({
-                code, name, category, cost, price, status: 'AVAILABLE',
-                ...imgData, date: selectedDate, timestamp: serverTs(), tradingHistory: []
+            if (file) {
+                const compressed = await imageCompression(file, { maxSizeMB: 0.8, maxWidthOrHeight: 1200, useWebWorker: false });
+                const ref = storage.ref(`amulets/${Date.now()}.jpg`);
+                await ref.put(compressed);
+                imgData.imageUrl = await ref.getDownloadURL();
+            }
+            await db.collection('amulet_stock').add({
+                code: $('stockCode').value.toUpperCase(),
+                name: $('stockName').value,
+                category: $('stockCategory').value,
+                cost: Number($('stockCost').value),
+                price: Number($('stockPrice').value),
+                status: 'AVAILABLE',
+                ...imgData,
+                date: selectedDate,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            closeAddStockModal(); showCustomAlert('สำเร็จ', 'เพิ่มพระเข้าตู้เรียบร้อย', 'success');
-        } catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
-        finally { btn.disabled = false; }
+            closeAddStockModal();
+        } catch (err) { alert(err.message); }
     }
-
-    function openExportModal() { $('exportStartDate').value = selectedDate; $('exportEndDate').value = selectedDate; $('exportCsvModal').classList.remove('hidden'); }
-    function closeExportModal() { $('exportCsvModal').classList.add('hidden'); }
-
-    function handleExportCsv(e) {
-        e.preventDefault();
-        const start = $('exportStartDate').value, end = $('exportEndDate').value;
-        const filtered = allTransactions.filter(tx => tx.date >= start && tx.date <= end);
-        if (!filtered.length) { alert('ไม่มีข้อมูล'); return; }
-        let csv = '\uFEFFวันที่,เวลา,รายการ,ประเภท,รายรับ,รายจ่าย,ช่องทาง\n';
-        filtered.forEach(tx => {
-            const inc = isIncome(tx.category), amt = Number(tx.amount || 0);
-            csv += `"${tx.date}","${tx.time || ''}","${tx.description}","${CAT_NAMES[tx.category] || tx.category}",${inc ? amt : 0},${inc ? 0 : amt},"${tx.wallet}"\n`;
-        });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `report_${start}.csv`;
-        link.click(); closeExportModal();
-    }
-
-    function showCustomAlert(title, msg, type) {
-        $('infoTitle').innerText = title; $('infoDesc').innerText = msg;
-        const b = $('infoIconBox');
-        if (type === 'success') { b.className = 'w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl'; b.innerHTML = '<i class="ph-fill ph-check-circle"></i>'; }
-        else { b.className = 'w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl'; b.innerHTML = '<i class="ph-fill ph-warning"></i>'; }
-        $('generalInfoModal').classList.add('hidden');
-    }
-
-    selectWallet('TRANSFER');
     </script>
 </body>
 </html>
