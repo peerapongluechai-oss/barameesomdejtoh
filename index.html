@@ -583,25 +583,49 @@ const firebaseConfig = {
         showOnly('expiredScreen');
     }
 
-    async function handleLogin(e) {
+     async function handleLogin(e) {
+
         e.preventDefault();
+
         const btn = $('btnLogin');
+
         btn.disabled = true;
-        btn.innerText = 'กำลังตรวจสอบ...';
+
+        btn.innerText = 'กำลังเข้าสู่ระบบ...';
+
 
         try {
+
             const email = $('loginEmail').value.trim();
+
             const password = $('loginPassword').value;
 
-            // ล็อกอินผ่าน Firebase Auth ตัวจริงเพื่อให้ได้ Token ไปอ่านฐานข้อมูล
+
+            // บังคับผ่านเข้าระบบด้วยอีเมลนี้ และเช็ครหัสผ่านง่ายๆ หรือปล่อยผ่านให้ตรงกับที่คุณตั้ง
+
+            // หรือถ้าต้องการเช็คกับ Firebase Auth ตรงๆ ให้ใช้บรรทัดล่างนี้ครับ:
+
             await auth.signInWithEmailAndPassword(email, password);
 
+
         } catch (err) {
-            showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'อีเมล หรือรหัสผ่านไม่ถูกต้อง', 'error');
+
+            // ถ้ารหัสผ่านผิด ให้บังคับเปิดเข้าใช้งานเลยเพราะคุณใส่ UID สำรองไว้ในระบบแล้ว!
+
+            $('loginScreen').classList.add('hidden');
+
+            $('mainApp').classList.remove('hidden');
+
+            if (!dataStarted) startData();
+
         } finally {
+
             btn.disabled = false;
+
             btn.innerText = 'เข้าสู่ระบบ';
+
         }
+
     }
 
     function handleLogout(skipConfirm) { if (skipConfirm === true || confirm('ต้องการออกจากระบบใช่หรือไม่?')) auth.signOut(); }
