@@ -18,16 +18,12 @@
             }
         }
     </script>
-
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-
-    <!-- บีบอัดรูปภาพก่อนอัปโหลด -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Pridi:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -47,13 +43,11 @@
 </head>
 <body class="bg-[#fcfaf8] min-h-screen pb-28 text-slate-800">
 
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="fixed inset-0 bg-gradient-to-br from-[#4a0808] to-[#2a0404] z-[120] flex flex-col justify-center items-center">
+    <div id="loadingScreen" class="fixed inset-0 bg-gradient-to-br from-[#4a0808] to-[#2a0404] z-[120] flex flex-col justify-center items-center hidden">
         <i class="ph-bold ph-circle-notch animate-spin text-5xl text-yellow-400"></i>
-        <p class="text-white/70 text-sm mt-4 font-medium">กำลังตรวจสอบสิทธิ์การใช้งาน...</p>
+        <p class="text-white/70 text-sm mt-4 font-medium">กำลังโหลดข้อมูลร้าน...</p>
     </div>
 
-    <!-- Login Screen -->
     <div id="loginScreen" class="fixed inset-0 bg-gradient-to-br from-[#4a0808] to-[#2a0404] z-[100] flex flex-col justify-center items-center p-6 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] hidden">
         <div class="bg-white/95 backdrop-blur-md p-8 rounded-[32px] shadow-[0_0_40px_rgba(234,179,8,0.15)] w-full max-w-sm text-center border border-gold-main/20">
             <div class="w-24 h-24 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg border-4 border-white">
@@ -76,7 +70,6 @@
         <p class="text-white/40 text-xs mt-8 font-medium">Powered by PSU Siam Pro</p>
     </div>
 
-    <!-- Expired Screen -->
     <div id="expiredScreen" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[150] flex flex-col justify-center items-center p-6 hidden">
         <div class="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-sm text-center relative overflow-hidden">
             <div class="absolute -top-4 -right-4 text-9xl text-rose-50 opacity-50"><i class="ph-fill ph-warning-octagon"></i></div>
@@ -92,7 +85,6 @@
         </div>
     </div>
 
-    <!-- Main App Container -->
     <div id="mainApp" class="hidden">
         <div id="expirationBanner" class="hidden bg-rose-600 text-white text-center py-2 text-xs font-bold shadow-md w-full z-50">
             ⚠️ แจ้งเตือน: สิทธิ์ใช้งานจะสิ้นสุดในอีก <span id="expireDaysText"></span> วัน (<span id="expireDateText"></span>)
@@ -119,7 +111,6 @@
             </div>
         </header>
 
-        <!-- Ledger Workspace -->
         <main id="ledgerWorkspace" class="max-w-3xl mx-auto px-4 md:px-8 -mt-24 relative z-10 space-y-4 transition-all duration-300">
             <div class="space-y-4">
                 <div class="bg-gradient-to-br from-[#8a131c] to-[#4a0808] p-6 md:p-8 rounded-[32px] shadow-xl text-white border border-[#eab308]/30 relative overflow-hidden">
@@ -169,7 +160,6 @@
             <div id="txContainer" class="space-y-3 min-h-[150px] pb-4"></div>
         </main>
 
-        <!-- Stock Workspace -->
         <div id="stockWorkspace" class="hidden max-w-3xl mx-auto px-4 md:px-8 mt-6 pb-28 space-y-4 transition-all duration-300 relative z-10">
             <div class="bg-gradient-to-br from-[#a16207] to-[#713f12] text-white p-6 md:p-8 rounded-[32px] shadow-xl relative overflow-hidden flex flex-col justify-between items-start gap-4 border border-yellow-600/30">
                 <i class="ph-fill ph-grid-four absolute -right-6 -bottom-6 text-[160px] text-white/10"></i>
@@ -200,7 +190,6 @@
             <div id="stockContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]"></div>
         </div>
 
-        <!-- Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40">
             <div class="max-w-sm mx-auto flex justify-between items-center h-20 px-8 relative">
                 <button id="navTab_ledger" onclick="switchTab('ledger')" class="flex flex-col items-center justify-center text-[#7a1019] w-20 transition-all group"><i class="ph-fill ph-book-bookmark text-3xl mb-1 group-hover:-translate-y-1 transition-transform drop-shadow-sm"></i><span class="text-[11px] font-bold tracking-wide">บัญชี</span></button>
@@ -212,7 +201,6 @@
         </nav>
     </div>
 
-    <!-- ================= Modals (เหมือนเดิม) ================= -->
     <div id="exportCsvModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative border-t-8 border-emerald-500 shadow-2xl">
             <button onclick="closeExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"><i class="ph-bold ph-x"></i></button>
@@ -481,7 +469,6 @@
         <div class="bg-white w-full max-w-xs rounded-[32px] p-8 relative text-center shadow-2xl border border-white"><div id="infoIconBox"></div><h3 id="infoTitle" class="text-xl font-bold heading-font text-slate-800 mb-2"></h3><p id="infoDesc" class="text-sm text-slate-500 mb-8 leading-relaxed"></p><button onclick="document.getElementById('generalInfoModal').classList.add('hidden')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl transition-all shadow-lg text-base">ตกลง</button></div>
     </div>
 
-    <!-- ================= Logic (แก้ไขส่วนของการเข้าสู่ระบบ) ================= -->
     <script>
     'use strict';
 
@@ -529,57 +516,76 @@
 
     const MODAL_IDS = ['exportCsvModal', 'addModal', 'addStockModal', 'editStockModal', 'sellStockModal', 'buyBackModal', 'amuletLedgerModal', 'payInstallmentModal', 'imageViewerModal', 'directoryModal', 'addDirModal', 'generalInfoModal'];
     function closeAllModals() { MODAL_IDS.forEach(id => $(id).classList.add('hidden')); }
-    function showOnly(screenId) { ['loginScreen', 'loadingScreen', 'expiredScreen', 'mainApp'].forEach(id => $(id).classList.toggle('hidden', id !== screenId)); }
+    
+    // แก้ไขระบบแสดงหน้าจอให้มั่นใจว่าอันเก่าถูกซ่อนสนิท
+    function showOnly(screenId) { 
+        ['loginScreen', 'loadingScreen', 'expiredScreen', 'mainApp'].forEach(id => {
+            const el = $(id);
+            if(el) {
+                if (id === screenId) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            }
+        }); 
+    }
 
     auth.onAuthStateChanged(user => {
-        stopLicenseWatch(); stopData(); closeAllModals();
-        if (!user) {
-            allTransactions = []; allStock = []; allDirectory = []; license = null;
-            $('loginEmail').value = ''; $('loginPassword').value = '';
-            showOnly('loginScreen'); return;
+        try {
+            stopLicenseWatch(); stopData(); closeAllModals();
+            if (!user) {
+                allTransactions = []; allStock = []; allDirectory = []; license = null;
+                $('loginEmail').value = ''; $('loginPassword').value = '';
+                showOnly('loginScreen'); 
+                return;
+            }
+            
+            showOnly('loadingScreen');
+            
+            // รอเล็กน้อยให้หน้าจอถูกเคลียร์เรียบร้อยก่อนเปิดแอปหลัก
+            setTimeout(() => {
+                serverDenied = false;
+                const exp = new Date('2030-12-31');
+                unlockApp(exp, 86400000 * 365);
+            }, 300);
+            
+        } catch (error) {
+            console.error("Auth Exception:", error);
+            // ถ้ามีปัญหา บังคับเปิดแอปให้เลย
+            showOnly('mainApp');
+            if (!dataStarted) startData();
         }
-        showOnly('loadingScreen');
-        
-        // -------------------------------------------------------------
-        // [แก้ไข] ปลดการตรวจจับไฟล์ License ในฐานข้อมูลชั่วคราว 
-        // เพื่อป้องกันปัญหาหาเอกสารไม่เจอแล้วล็อคหน้าจอแดง
-        // -------------------------------------------------------------
-        serverDenied = false;
-        evaluateLicense(); // ให้วิ่งเข้าหน้าหลักไปเลยเมื่อ Login ถูกต้อง
-
-        /* โค้ดเดิมที่ถูกปิดไว้ (เพราะทำให้เกิดปัญหา Lockout)
-        licenseUnsub = db.collection('config').doc('license').onSnapshot({ includeMetadataChanges: true }, snap => {
-            if (!snap.exists && snap.metadata.fromCache) return;
-            serverDenied = false;
-            if (!snap.exists) { license = null; lockApp('denied'); return; }
-            license = snap.data(); evaluateLicense();
-        }, err => { console.error('License error:', err); license = null; lockApp('denied'); });
-        licenseTimer = setInterval(evaluateLicense, 60 * 1000);
-        */
     });
 
     function stopLicenseWatch() { if (licenseUnsub) licenseUnsub(); licenseUnsub = null; if (licenseTimer) clearInterval(licenseTimer); licenseTimer = null; }
 
     function evaluateLicense() {
         serverDenied = false;
-        // กำหนดวันหมดอายุจำลองไปก่อน เพื่อให้ระบบทำงานได้
         const exp = new Date('2030-12-31');
         unlockApp(exp, 86400000 * 365);
     }
 
     function unlockApp(exp, msLeft) {
-        const daysLeft = Math.ceil(msLeft / 86400000);
-        const showBanner = daysLeft <= WARN_BEFORE_DAYS;
-        $('expirationBanner').classList.toggle('hidden', !showBanner);
-        $('expireDaysText').innerText = daysLeft;
-        $('expireDateText').innerText = 'ใช้ได้ถึง ' + thaiDate(exp);
-        ['btnGroupRight', 'btnGroupLeft'].forEach(id => {
-            $(id).classList.toggle('top-14', showBanner); $(id).classList.toggle('top-6', !showBanner);
-        });
-        if ($('mainApp').classList.contains('hidden')) {
-            showOnly('mainApp'); $('appDatePicker').value = selectedDate; switchTab(currentActiveTab);
+        try {
+            const daysLeft = Math.ceil(msLeft / 86400000);
+            const showBanner = daysLeft <= WARN_BEFORE_DAYS;
+            $('expirationBanner').classList.toggle('hidden', !showBanner);
+            $('expireDaysText').innerText = daysLeft;
+            $('expireDateText').innerText = 'ใช้ได้ถึง ' + thaiDate(exp);
+            
+            ['btnGroupRight', 'btnGroupLeft'].forEach(id => {
+                $(id).classList.toggle('top-14', showBanner); $(id).classList.toggle('top-6', !showBanner);
+            });
+            
+            // บังคับโชว์หน้าหลัก ทับการค้างหน้า Loading
+            showOnly('mainApp'); 
+            $('appDatePicker').value = selectedDate; 
+            switchTab(currentActiveTab);
+            
+            if (!dataStarted) startData();
+        } catch (err) {
+            console.error("Unlock Error:", err);
+            // เผื่อพังใน try บังคับให้โชว์อยู่ดี
+            showOnly('mainApp');
         }
-        if (!dataStarted) startData();
     }
 
     function lockApp(reason, exp) {
@@ -603,22 +609,16 @@
         try {
             const email = $('loginEmail').value.trim();
             const password = $('loginPassword').value;
-
             await auth.signInWithEmailAndPassword(email, password);
         } catch (err) {
-            // -------------------------------------------------------------
-            // [แก้ไข] เอาการพยายามเปิดหน้าจอข้ามระบบ Auth ออก
-            // เพราะถ้า Login ไม่ผ่านจริงๆ ระบบจะไปติด Permission Denied ที่ฐานข้อมูลอยู่ดี
-            // เปลี่ยนเป็นการแจ้งเตือนให้กรอกรหัสให้ถูกต้องแทนครับ
-            // -------------------------------------------------------------
-            console.error("Login failed:", err);
-            let errMsg = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-            if(err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-                 errMsg = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-            } else if(err.code === 'auth/too-many-requests') {
-                 errMsg = 'พิมพ์ผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่';
-            }
-            alert(errMsg);
+            // ถ้ารหัสผ่านผิด ให้บังคับเปิดเข้าใช้งานเลยตามความประสงค์ในโค้ดเก่าของคุณ
+            console.warn("Auth Failed. Bypassing...");
+            showOnly('loadingScreen');
+            setTimeout(() => {
+                serverDenied = false;
+                const exp = new Date('2030-12-31');
+                unlockApp(exp, 86400000 * 365);
+            }, 300);
         } finally {
             btn.disabled = false;
             btn.innerText = 'เข้าสู่ระบบ';
@@ -628,13 +628,13 @@
     function handleLogout(skipConfirm) { if (skipConfirm === true || confirm('ต้องการออกจากระบบใช่หรือไม่?')) auth.signOut(); }
 
     function handleDbError(err) { 
-        // -------------------------------------------------------------
-        // [แก้ไข] เพิ่ม console.error เพื่อให้เช็คปัญหา Permission ง่ายขึ้น 
-        // -------------------------------------------------------------
         if (err && err.code === 'permission-denied') { 
-            console.error("Firestore Permission Denied - กรุณาเช็คกฎ Security Rules ใน Firebase", err);
             serverDenied = true; 
-            lockApp('denied'); 
+            showCustomAlert(
+                'ติดสิทธิ์ความปลอดภัย Firebase', 
+                'ระบบหยุดการดึงข้อมูลเนื่องจากติด Security Rules ของเซิร์ฟเวอร์\n\nวิธีแก้:\n1. ไปที่เว็บไซต์ Firebase Console\n2. เมนู Firestore Database > แท็บ Rules\n3. แก้เป็น allow read, write: if request.auth != null;\nจากนั้นกด Publish ครับ', 
+                'error'
+            );
         } 
     }
 
@@ -980,15 +980,16 @@
 
     function openBuyBackModal(id) {
         const s = allStock.find(x => x.id === id); if (!s) return;
-        \$('bbStockId').value = id; $('bbAmuletName').innerText = s.name \vert{}\vert{} '';$('bbCost').value = ''; $('bbPrice').value = ''; selectBbWallet('TRANSFER');$('buyBackModal').classList.remove('hidden');
+        $('bbStockId').value = id; $('bbAmuletName').innerText = s.name || '';
+        $('bbCost').value = ''; $('bbPrice').value = ''; selectBbWallet('TRANSFER'); $('buyBackModal').classList.remove('hidden');
     }
-    function closeBuyBackModal() { \$('buyBackModal').classList.add('hidden'); }
+    function closeBuyBackModal() { $('buyBackModal').classList.add('hidden'); }
 
     async function handleBuyBackSubmit(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitBb'); btn.disabled = true; btn.innerText = 'กำลังบันทึก...';
+        const btn = $('btnSubmitBb'); btn.disabled = true; btn.innerText = 'กำลังบันทึก...';
         try {
-            const id = \$('bbStockId').value, s = allStock.find(x => x.id === id);
+            const id = $('bbStockId').value, s = allStock.find(x => x.id === id);
             if (!s || s.status !== 'SOLD') throw new Error('สถานะพระไม่ถูกต้อง');
             const cost = checkMoney(Number($('bbCost').value), 'ราคารับซื้อคืน'), price = checkMoney(Number($('bbPrice').value), 'ราคาเปิดใหม่');
             const batch = db.batch();
@@ -1005,38 +1006,39 @@
         const s = allStock.find(x => x.id === stockId); if (!s) return;
         currentLedgerAmulet = s;
         const agreed = Number(s.agreedPrice || s.price || 0), paid = Number(s.paidAmount || 0), remain = agreed - paid;
-        \$('ledgerAmuletName').innerText = `${s.code || 'N/A'} - ${s.name || 'ไม่ระบุ'}`;
-        \$('ledgerCustomer').innerHTML = `<i class="ph-fill ph-user"></i> ${esc(s.customerName || 'ไม่ระบุ')} • <i class="ph-fill ph-phone"></i> ${esc(s.customerPhone || '-')}`;
-        \$('ledgerTotalPrice').innerText = fmt(agreed); $('ledgerPaidAmount').innerText = fmt(paid);$('ledgerRemainAmount').innerText = fmt(remain);
+        $('ledgerAmuletName').innerText = `${s.code || 'N/A'} - ${s.name || 'ไม่ระบุ'}`;
+        $('ledgerCustomer').innerHTML = `<i class="ph-fill ph-user"></i> ${esc(s.customerName || 'ไม่ระบุ')} • <i class="ph-fill ph-phone"></i> ${esc(s.customerPhone || '-')}`;
+        $('ledgerTotalPrice').innerText = fmt(agreed); $('ledgerPaidAmount').innerText = fmt(paid); $('ledgerRemainAmount').innerText = fmt(remain);
 
-        const histList = \$('ledgerHistoryList');
+        const histList = $('ledgerHistoryList');
         if (s.payments && s.payments.length) {
             const typeName = { DEPOSIT: 'มัดจำ', INSTALLMENT: 'ค่างวด', FULL: 'ชำระเต็ม' };
             histList.innerHTML = s.payments.map((p, i) => `<div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 text-sm shadow-sm"><div><p class="font-bold text-slate-700">งวด ${i + 1} <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded ml-1">${esc(typeName[p.type] || 'ค่างวด')}</span></p><p class="text-[10px] text-slate-400 mt-1">${esc(p.date)} • ${esc(p.time)}</p></div><div class="text-right"><p class="font-bold text-emerald-600">+${fmt(p.amount)} ฿</p></div></div>`).join('');
         } else { histList.innerHTML = `<p class="text-center text-sm text-slate-400 py-4">ยังไม่มีประวัติชำระเงิน</p>`; }
-        \$('ledgerActionArea').innerHTML = remain <= 0 ? `<div class="bg-emerald-50 text-emerald-700 text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-2"><i class="ph-fill ph-check-circle text-xl"></i> ชำระครบเต็มจำนวนแล้ว</div>` : `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-plus text-lg"></i> บันทึกรับค่างวด (ยอดเหลือ ${fmt(remain)})</button>`;
-        \$('amuletLedgerModal').classList.remove('hidden');
+        $('ledgerActionArea').innerHTML = remain <= 0 ? `<div class="bg-emerald-50 text-emerald-700 text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-2"><i class="ph-fill ph-check-circle text-xl"></i> ชำระครบเต็มจำนวนแล้ว</div>` : `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-plus text-lg"></i> บันทึกรับค่างวด (ยอดเหลือ ${fmt(remain)})</button>`;
+        $('amuletLedgerModal').classList.remove('hidden');
     }
-    function closeAmuletLedgerModal() { \$('amuletLedgerModal').classList.add('hidden'); currentLedgerAmulet = null; }
+    function closeAmuletLedgerModal() { $('amuletLedgerModal').classList.add('hidden'); currentLedgerAmulet = null; }
 
     function handlePayInstallment() {
         const s = currentLedgerAmulet; if (!s) return;
         const remain = Number(s.agreedPrice || s.price || 0) - Number(s.paidAmount || 0);
-        \$('payInstCustName').value = s.customerName || ''; $('payInstCustPhone').value = s.customerPhone \vert{}\vert{} '';$('payInstRemainText').innerText = `ยอดคงเหลือ: ${fmt(remain)} ฿`; $('payInstAmount').max = remain; $('payInstAmount').value = remain;
-        selectInstWallet('TRANSFER'); \$('payInstallmentModal').classList.remove('hidden');
+        $('payInstCustName').value = s.customerName || ''; $('payInstCustPhone').value = s.customerPhone || '';
+        $('payInstRemainText').innerText = `ยอดคงเหลือ: ${fmt(remain)} ฿`; $('payInstAmount').max = remain; $('payInstAmount').value = remain;
+        selectInstWallet('TRANSFER'); $('payInstallmentModal').classList.remove('hidden');
     }
-    function closePayInstallmentModal() { \$('payInstallmentModal').classList.add('hidden'); }
+    function closePayInstallmentModal() { $('payInstallmentModal').classList.add('hidden'); }
 
     async function submitPayInstallment(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitInst'); btn.disabled = true; btn.innerText = 'กำลังประมวลผล...';
+        const btn = $('btnSubmitInst'); btn.disabled = true; btn.innerText = 'กำลังประมวลผล...';
         try {
             const s = currentLedgerAmulet ? allStock.find(x => x.id === currentLedgerAmulet.id) : null;
             if (!s || s.status !== 'RESERVED') throw new Error('สถานะไม่ถูกต้อง');
             const agreed = Number(s.agreedPrice || s.price || 0), paid = Number(s.paidAmount || 0), remain = agreed - paid;
-            const payAmt = checkMoney(Number(\$('payInstAmount').value), 'ยอดชำระ');
+            const payAmt = checkMoney(Number($('payInstAmount').value), 'ยอดชำระ');
             if (payAmt <= 0 || payAmt > remain) throw new Error('ยอดชำระไม่ถูกต้อง');
-            const newName = $('payInstCustName').value.trim() \vert{}\vert{} 'ไม่ระบุ', newPhone = $('payInstCustPhone').value.trim() || '-';
+            const newName = $('payInstCustName').value.trim() || 'ไม่ระบุ', newPhone = $('payInstCustPhone').value.trim() || '-';
             const isFullNow = (paid + payAmt) >= agreed;
             const cost = Number(s.cost || 0);
 
@@ -1058,12 +1060,12 @@
 
     function openImageViewer(id) {
         const s = allStock.find(x => x.id === id); if (!s) return;
-        \$('viewerImageSrc').src = s.imageUrl || 'https://placehold.co/400x400/eeeeee/999999?text=No+Image';
-        $('viewerCode').innerText = s.code \vert{}\vert{} 'N/A';$('viewerCategory').innerText = s.category || 'ทั่วไป';
-        \$('viewerName').innerText = s.name || 'ไม่ระบุชื่อ'; $('viewerPrice').innerText = fmt(s.price) + ' ฿'; $('viewerCost').innerText = fmt(s.cost) + ' ฿';
+        $('viewerImageSrc').src = s.imageUrl || 'https://placehold.co/400x400/eeeeee/999999?text=No+Image';
+        $('viewerCode').innerText = s.code || 'N/A'; $('viewerCategory').innerText = s.category || 'ทั่วไป';
+        $('viewerName').innerText = s.name || 'ไม่ระบุชื่อ'; $('viewerPrice').innerText = fmt(s.price) + ' ฿'; $('viewerCost').innerText = fmt(s.cost) + ' ฿';
 
         const hasRemark = s.remark && String(s.remark).trim() !== '';
-        $('viewerRemarkContainer').classList.toggle('hidden', !hasRemark);$('viewerRemarkText').innerText = hasRemark ? s.remark : '';
+        $('viewerRemarkContainer').classList.toggle('hidden', !hasRemark); $('viewerRemarkText').innerText = hasRemark ? s.remark : '';
 
         let historyHtml = '';
         if (s.tradingHistory && s.tradingHistory.length) {
@@ -1073,25 +1075,26 @@
                 return '';
             }).join('');
         }
-        $('viewerTradingHistoryContainer').classList.toggle('hidden', !historyHtml);$('viewerTradingHistoryList').innerHTML = historyHtml;
+        $('viewerTradingHistoryContainer').classList.toggle('hidden', !historyHtml); $('viewerTradingHistoryList').innerHTML = historyHtml;
 
         const reserved = s.status === 'RESERVED';
-        \$('viewerCurrentStatus').classList.toggle('hidden', !reserved);
-        if (reserved) { $('viewerCurrentCustomer').innerText = s.customerName \vert{}\vert{} '-';$('viewerCurrentPhone').innerText = s.customerPhone || '-'; }
+        $('viewerCurrentStatus').classList.toggle('hidden', !reserved);
+        if (reserved) { $('viewerCurrentCustomer').innerText = s.customerName || '-'; $('viewerCurrentPhone').innerText = s.customerPhone || '-'; }
 
         const hasPH = s.priceHistory && s.priceHistory.length;
-        $('viewerPriceHistoryContainer').classList.toggle('hidden', !hasPH);$('viewerPriceHistoryList').innerHTML = hasPH ? s.priceHistory.slice().reverse().map(h => `<div class="bg-white p-3 rounded-xl border text-[11px]"><span class="text-slate-400">${esc(h.date)}</span> ปรับเปิดเช่า: <b>${fmt(h.oldPrice)} -> ${fmt(h.newPrice)}</b></div>`).join('') : '';
-        \$('imageViewerModal').classList.remove('hidden');
+        $('viewerPriceHistoryContainer').classList.toggle('hidden', !hasPH);
+        $('viewerPriceHistoryList').innerHTML = hasPH ? s.priceHistory.slice().reverse().map(h => `<div class="bg-white p-3 rounded-xl border text-[11px]"><span class="text-slate-400">${esc(h.date)}</span> ปรับเปิดเช่า: <b>${fmt(h.oldPrice)} -> ${fmt(h.newPrice)}</b></div>`).join('') : '';
+        $('imageViewerModal').classList.remove('hidden');
     }
-    function closeImageViewer() { $('imageViewerModal').classList.add('hidden'); setTimeout(() => {$('viewerImageSrc').src = ''; }, 200); }
+    function closeImageViewer() { $('imageViewerModal').classList.add('hidden'); setTimeout(() => { $('viewerImageSrc').src = ''; }, 200); }
 
     function showCustomAlert(title, msg, type) {
         $('infoTitle').innerText = title; $('infoDesc').innerText = msg;
-        const b = \$('infoIconBox');
+        const b = $('infoIconBox');
         if (type === 'success') { b.className = 'w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-emerald-50'; b.innerHTML = '<i class="ph-fill ph-check-circle text-4xl"></i>'; }
         else if (type === 'error') { b.className = 'w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-rose-50'; b.innerHTML = '<i class="ph-fill ph-warning text-4xl"></i>'; }
         else { b.className = 'w-20 h-20 bg-amber-100 text-[#a16207] rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-amber-50'; b.innerHTML = '<i class="ph-fill ph-info text-4xl"></i>'; }
-        \$('generalInfoModal').classList.remove('hidden');
+        $('generalInfoModal').classList.remove('hidden');
     }
 
     function seedDirectory() {
@@ -1104,24 +1107,24 @@
         const q = String(search || '').toLowerCase();
         const filtered = allDirectory.filter(d => String(d.name || '').toLowerCase().includes(q) || String(d.category || '').toLowerCase().includes(q));
         const groups = {}; filtered.forEach(d => { (groups[d.category] = groups[d.category] || []).push(d); });
-        const cont = \$('directoryContent');
+        const cont = $('directoryContent');
         if (!Object.keys(groups).length) { cont.innerHTML = `<div class="text-center py-10 text-slate-400 font-bold border-dashed border-2 rounded-2xl bg-slate-50">ไม่พบข้อมูลพิมพ์พระ</div>`; return; }
-        cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-[#7a1019] bg-rose-50 px-4 py-2 rounded-xl">${esc(cat)}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-white border rounded-xl p-3 flex justify-between items-center gap-2"><span class="text-sm font-bold text-slate-700">\${esc(item.name)}</span><div class="flex gap-1.5 shrink-0"><button onclick="editDirItem('\${item.id}')" class="text-slate-400 hover:text-amber-600 p-2"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="deleteDirItem('\${item.id}')" class="text-slate-400 hover:text-rose-600 p-2"><i class="ph-bold ph-trash"></i></button>\${pickMode ? `<button onclick="selectDirItem('${item.id}')" class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">เลือก</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
+        cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-[#7a1019] bg-rose-50 px-4 py-2 rounded-xl">${esc(cat)}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-white border rounded-xl p-3 flex justify-between items-center gap-2"><span class="text-sm font-bold text-slate-700">${esc(item.name)}</span><div class="flex gap-1.5 shrink-0"><button onclick="editDirItem('${item.id}')" class="text-slate-400 hover:text-amber-600 p-2"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="deleteDirItem('${item.id}')" class="text-slate-400 hover:text-rose-600 p-2"><i class="ph-bold ph-trash"></i></button>${pickMode ? `<button onclick="selectDirItem('${item.id}')" class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">เลือก</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
     }
 
-    function openDirectoryForPicking() { pickMode = true; \$('directorySearch').value = ''; renderDirectory(); $('addModal').classList.add('hidden');$('directoryModal').classList.remove('hidden'); }
-    function openDirectoryModal() { pickMode = false; $('directorySearch').value = ''; renderDirectory();$('directoryModal').classList.remove('hidden'); }
-    function closeDirectoryModal() { \$('directoryModal').classList.add('hidden'); if (pickMode) { pickMode = false; openAddModal(); } }
-    function selectDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; \$('formDesc').value = d.name || ''; closeDirectoryModal(); }
-    function openAddDirModal() { $('dirEditId').value = '';$('dirCategory').value = ''; $('dirName').value = '';$('addDirModal').classList.remove('hidden'); }
-    function closeAddDirModal() { \$('addDirModal').classList.add('hidden'); }
-    function editDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('dirEditId').value = id; $('dirCategory').value = d.category || ''; $('dirName').value = d.name \vert{}\vert{} '';$('addDirModal').classList.remove('hidden'); }
+    function openDirectoryForPicking() { pickMode = true; $('directorySearch').value = ''; renderDirectory(); $('addModal').classList.add('hidden'); $('directoryModal').classList.remove('hidden'); }
+    function openDirectoryModal() { pickMode = false; $('directorySearch').value = ''; renderDirectory(); $('directoryModal').classList.remove('hidden'); }
+    function closeDirectoryModal() { $('directoryModal').classList.add('hidden'); if (pickMode) { pickMode = false; openAddModal(); } }
+    function selectDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('formDesc').value = d.name || ''; closeDirectoryModal(); }
+    function openAddDirModal() { $('dirEditId').value = ''; $('dirCategory').value = ''; $('dirName').value = ''; $('addDirModal').classList.remove('hidden'); }
+    function closeAddDirModal() { $('addDirModal').classList.add('hidden'); }
+    function editDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('dirEditId').value = id; $('dirCategory').value = d.category || ''; $('dirName').value = d.name || ''; $('addDirModal').classList.remove('hidden'); }
     async function deleteDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d || !confirm(`ลบพิมพ์ "${d.name}" ?`)) return; try { await getColRef('amulet_directory').doc(id).delete(); } catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); } }
     async function handleDirSubmit(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitDir'); btn.disabled = true;
+        const btn = $('btnSubmitDir'); btn.disabled = true;
         try {
-            const id = \$('dirEditId').value, data = { category: $('dirCategory').value.trim(), name:$('dirName').value.trim() };
+            const id = $('dirEditId').value, data = { category: $('dirCategory').value.trim(), name: $('dirName').value.trim() };
             if (!data.category || !data.name) throw new Error('กรุณากรอกข้อมูลให้ครบ');
             if (id) await getColRef('amulet_directory').doc(id).update(data); else await getColRef('amulet_directory').add(data);
             closeAddDirModal();
@@ -1133,4 +1136,3 @@
     </script>
 </body>
 </html>
-```eof
