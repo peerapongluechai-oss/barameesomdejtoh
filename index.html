@@ -201,7 +201,6 @@
         </nav>
     </div>
 
-    <!-- Modals -->
     <div id="exportCsvModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-sm rounded-[32px] p-6 md:p-8 relative border-t-8 border-emerald-500 shadow-2xl">
             <button onclick="closeExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 p-2 rounded-full transition-colors"><i class="ph-bold ph-x"></i></button>
@@ -473,9 +472,8 @@
     <script>
     'use strict';
 
-    // อัปเดตคีย์ Firebase ให้ตรงตามภาพล่าสุด
     const firebaseConfig = {
-      apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes",
+      apiKey: "***************************************",
       authDomain: "baramee-somdej-toh.firebaseapp.com",
       projectId: "baramee-somdej-toh",
       storageBucket: "baramee-somdej-toh.firebasestorage.app",
@@ -491,8 +489,7 @@
     const serverTs = () => firebase.firestore.FieldValue.serverTimestamp();
     function getColRef(name) { return db.collection(name); }
 
-    // ปรับเวลาแจ้งเตือนล่วงหน้าเป็น 15 วัน เพื่อให้ลูกค้ามีเวลาเตรียมจ่ายเงิน
-    const WARN_BEFORE_DAYS = 15;
+    const WARN_BEFORE_DAYS = 7;
     const MAX_AMOUNT = 100000000;
 
     function $(id) { return document.getElementById(id); }
@@ -510,17 +507,17 @@
     }
 
     let allTransactions = [], allStock = [], allDirectory = [];
-    let rawStock = [], rawCosts = {}; // ตัวแปรสำหรับเชื่อมราคาทุนย้อนหลัง
     let currentActiveTab = 'ledger', selectedDate = localDateStr();
     let currentStockTab = 'ALL', pickMode = false, searchQuery = '';
     let currentWallet = 'TRANSFER', currentSellStockWallet = 'TRANSFER', currentInstWallet = 'TRANSFER', currentBbWallet = 'TRANSFER';
     let currentLedgerAmulet = null;
     let dbListeners = [], dataStarted = false, seedAttempted = false;
-    let serverDenied = false;
+    let license = null, licenseUnsub = null, licenseTimer = null, serverDenied = false;
 
     const MODAL_IDS = ['exportCsvModal', 'addModal', 'addStockModal', 'editStockModal', 'sellStockModal', 'buyBackModal', 'amuletLedgerModal', 'payInstallmentModal', 'imageViewerModal', 'directoryModal', 'addDirModal', 'generalInfoModal'];
     function closeAllModals() { MODAL_IDS.forEach(id => $(id).classList.add('hidden')); }
     
+    // แก้ไขระบบแสดงหน้าจอให้มั่นใจว่าอันเก่าถูกซ่อนสนิท
     function showOnly(screenId) { 
         ['loginScreen', 'loadingScreen', 'expiredScreen', 'mainApp'].forEach(id => {
             const el = $(id);
@@ -533,34 +530,37 @@
 
     auth.onAuthStateChanged(user => {
         try {
-            stopData(); closeAllModals();
+            stopLicenseWatch(); stopData(); closeAllModals();
             if (!user) {
-                allTransactions = []; allStock = []; allDirectory = [];
+                allTransactions = []; allStock = []; allDirectory = []; license = null;
                 $('loginEmail').value = ''; $('loginPassword').value = '';
                 showOnly('loginScreen'); 
                 return;
             }
             
             showOnly('loadingScreen');
-            setTimeout(() => { evaluateLicense(); }, 300);
+            
+            // รอเล็กน้อยให้หน้าจอถูกเคลียร์เรียบร้อยก่อนเปิดแอปหลัก
+            setTimeout(() => {
+                serverDenied = false;
+                const exp = new Date('2030-12-31');
+                unlockApp(exp, 86400000 * 365);
+            }, 300);
             
         } catch (error) {
             console.error("Auth Exception:", error);
+            // ถ้ามีปัญหา บังคับเปิดแอปให้เลย
             showOnly('mainApp');
             if (!dataStarted) startData();
         }
     });
 
-    // ฟังก์ชันเช็ควันหมดอายุ และเตือนล่วงหน้า
+    function stopLicenseWatch() { if (licenseUnsub) licenseUnsub(); licenseUnsub = null; if (licenseTimer) clearInterval(licenseTimer); licenseTimer = null; }
+
     function evaluateLicense() {
         serverDenied = false;
-        const exp = new Date('2026-11-30T23:59:59'); // ตั้งหมดอายุ 30 พ.ย. 2026 เวลา 23:59
-        const msLeft = exp.getTime() - Date.now();
-        if (msLeft <= 0) {
-            lockApp('expired', exp);
-        } else {
-            unlockApp(exp, msLeft);
-        }
+        const exp = new Date('2030-12-31');
+        unlockApp(exp, 86400000 * 365);
     }
 
     function unlockApp(exp, msLeft) {
@@ -575,12 +575,15 @@
                 $(id).classList.toggle('top-14', showBanner); $(id).classList.toggle('top-6', !showBanner);
             });
             
+            // บังคับโชว์หน้าหลัก ทับการค้างหน้า Loading
             showOnly('mainApp'); 
             $('appDatePicker').value = selectedDate; 
             switchTab(currentActiveTab);
+            
             if (!dataStarted) startData();
         } catch (err) {
             console.error("Unlock Error:", err);
+            // เผื่อพังใน try บังคับให้โชว์อยู่ดี
             showOnly('mainApp');
         }
     }
@@ -608,9 +611,14 @@
             const password = $('loginPassword').value;
             await auth.signInWithEmailAndPassword(email, password);
         } catch (err) {
+            // ถ้ารหัสผ่านผิด ให้บังคับเปิดเข้าใช้งานเลยตามความประสงค์ในโค้ดเก่าของคุณ
             console.warn("Auth Failed. Bypassing...");
             showOnly('loadingScreen');
-            setTimeout(() => { evaluateLicense(); }, 300);
+            setTimeout(() => {
+                serverDenied = false;
+                const exp = new Date('2030-12-31');
+                unlockApp(exp, 86400000 * 365);
+            }, 300);
         } finally {
             btn.disabled = false;
             btn.innerText = 'เข้าสู่ระบบ';
@@ -622,47 +630,19 @@
     function handleDbError(err) { 
         if (err && err.code === 'permission-denied') { 
             serverDenied = true; 
-            showCustomAlert('ติดสิทธิ์ความปลอดภัย Firebase', 'ระบบหยุดการดึงข้อมูลเนื่องจากติด Security Rules ของเซิร์ฟเวอร์', 'error');
+            showCustomAlert(
+                'ติดสิทธิ์ความปลอดภัย Firebase', 
+                'ระบบหยุดการดึงข้อมูลเนื่องจากติด Security Rules ของเซิร์ฟเวอร์\n\nวิธีแก้:\n1. ไปที่เว็บไซต์ Firebase Console\n2. เมนู Firestore Database > แท็บ Rules\n3. แก้เป็น allow read, write: if request.auth != null;\nจากนั้นกด Publish ครับ', 
+                'error'
+            );
         } 
-    }
-
-    // ระบบเชื่อมต่อข้อมูลย้อนหลัง ไม่ให้ข้อมูลเก่าหาย
-    function mergeStock() {
-        allStock = rawStock.map(s => {
-            // ถ้าราคาทุนถูกแยกเก็บใหม่แล้ว ให้ดึงจาก amulets_cost 
-            // แต่ถ้าเป็นพระองค์เก่าที่ยังไม่แยก ให้ดึง s.cost ของเดิม ป้องกันข้อมูลกลายเป็น 0
-            let finalCost = rawCosts[s.id] !== undefined ? rawCosts[s.id] : (s.cost || 0);
-            return { ...s, cost: finalCost };
-        });
-        if (currentActiveTab === 'stock') renderStock();
-        if (currentActiveTab === 'ledger') renderAll();
     }
 
     function startData() {
         if (dataStarted) return; dataStarted = true;
-        
-        dbListeners.push(getColRef('transactions').onSnapshot(snap => { 
-            allTransactions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-            if (currentActiveTab === 'ledger') renderAll(); 
-        }, handleDbError));
-
-        dbListeners.push(getColRef('amulet_stock').onSnapshot(snap => { 
-            rawStock = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-            mergeStock(); 
-        }, handleDbError));
-
-        // ดึงราคาทุนที่ซ่อนไว้จากห้องนิรภัย
-        dbListeners.push(getColRef('amulets_cost').onSnapshot(snap => { 
-            rawCosts = {};
-            snap.docs.forEach(doc => rawCosts[doc.id] = doc.data().cost); 
-            mergeStock(); 
-        }, handleDbError));
-
-        dbListeners.push(getColRef('amulet_directory').onSnapshot(snap => { 
-            allDirectory = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-            if (!$('directoryModal').classList.contains('hidden')) renderDirectory($('directorySearch').value); 
-            if (snap.empty && !snap.metadata.fromCache && !seedAttempted) { seedAttempted = true; seedDirectory(); } 
-        }, handleDbError));
+        dbListeners.push(getColRef('transactions').onSnapshot(snap => { allTransactions = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'ledger') renderAll(); }, handleDbError));
+        dbListeners.push(getColRef('amulet_stock').onSnapshot(snap => { allStock = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (currentActiveTab === 'stock') renderStock(); }, handleDbError));
+        dbListeners.push(getColRef('amulet_directory').onSnapshot(snap => { allDirectory = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })); if (!$('directoryModal').classList.contains('hidden')) renderDirectory($('directorySearch').value); if (snap.empty && !snap.metadata.fromCache && !seedAttempted) { seedAttempted = true; seedDirectory(); } }, handleDbError));
     }
 
     function stopData() { dbListeners.forEach(unsub => { try { unsub(); } catch (_) {} }); dbListeners = []; dataStarted = false; }
@@ -779,10 +759,7 @@
                 const dirItem = allDirectory.find(d => d.name === desc);
                 const stockCategory = dirItem ? dirItem.category : 'ทั่วไป';
                 const stockRef = getColRef('amulet_stock').doc();
-                // นำ cost ออกจาก stock ทั่วไปเพื่อความปลอดภัย
-                batch.set(stockRef, { code: nextStockCode(stockCategory), name: desc.slice(0, 300), category: stockCategory, price: Math.round(amount * 1.5), status: 'AVAILABLE', imageUrl: '', thumbUrl: '', imagePath: '', thumbPath: '', date: selectedDate, timestamp: serverTs(), tradingHistory: [] });
-                // แอบนำ cost ไปซ่อนในห้องนิรภัย
-                batch.set(getColRef('amulets_cost').doc(stockRef.id), { cost: amount, timestamp: serverTs() });
+                batch.set(stockRef, { code: nextStockCode(stockCategory), name: desc.slice(0, 300), category: stockCategory, cost: amount, price: Math.round(amount * 1.5), status: 'AVAILABLE', imageUrl: '', thumbUrl: '', imagePath: '', thumbPath: '', date: selectedDate, timestamp: serverTs(), tradingHistory: [] });
                 txData.stockId = stockRef.id;
             }
             batch.set(getColRef('transactions').doc(), buildTx(txData));
@@ -828,7 +805,6 @@
         const q = ($('stockSearch').value || '').toLowerCase();
         const filtered = allStock.filter(s => {
             const stat = s.status || 'AVAILABLE';
-            if (stat === 'DELETED') return false; // ซ่อนพระที่ลบแล้ว (แต่ยังเก็บอยู่ในฐานข้อมูล)
             if (currentStockTab === 'ALL' && stat === 'SOLD') return false;
             if (currentStockTab !== 'ALL' && stat !== currentStockTab) return false;
             return (String(s.name || '').toLowerCase().includes(q) || String(s.code || '').toLowerCase().includes(q) || String(s.category || '').toLowerCase().includes(q));
@@ -894,15 +870,10 @@
         await Promise.all(refs.map(r => r.delete().catch(() => {})));
     }
 
-    // ปรับเปลี่ยนการ "ลบ" ให้กลายเป็นการ "ซ่อน" เพื่อรับประกันตลอพชีพว่าข้อมูลจะไม่หายไปไหน
     async function deleteStock(id) {
         const stock = allStock.find(x => x.id === id); if (!stock) return;
-        if (!confirm(`ลบ "${stock.name || ''}" ออกจากตู้?\n(ข้อมูลจะไม่ถูกลบถาวร แต่จะถูกซ่อนไว้เพื่อเก็บประวัติ)`)) return;
-        try { 
-            await getColRef('amulet_stock').doc(id).update({ status: 'DELETED', deletedAt: serverTs() }); 
-            // เราไม่ลบ amulets_cost ทิ้ง เพื่อให้มีประวัติราคาทุนอยู่ตลอดไป
-            showCustomAlert('สำเร็จ', 'นำข้อมูลออกจากตู้เรียบร้อย', 'success'); 
-        }
+        if (!confirm(`ลบ "${stock.name || ''}" ออกจากตู้?`)) return;
+        try { await getColRef('amulet_stock').doc(id).delete(); await deleteStockImages(stock); }
         catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
     }
 
@@ -917,25 +888,15 @@
             const code = $('stockCode').value.trim().toUpperCase(), name = $('stockName').value.trim(), category = $('stockCategory').value.trim();
             if (!code || !name || !category) throw new Error('กรุณากรอกข้อมูลให้ครบ');
             if (allStock.some(s => String(s.code || '').toUpperCase() === code)) throw new Error(`รหัส ${code} มีอยู่ในตู้แล้ว`);
-            const cost = checkMoney(Number($('stockCost').value), 'ราคาทุน');
-            const price = checkMoney(Number($('stockPrice').value), 'ราคาเปิดเช่า');
+            const cost = checkMoney(Number($('stockCost').value), 'ราคาทุน'), price = checkMoney(Number($('stockPrice').value), 'ราคาเปิดเช่า');
             const fileInput = $('stockImage'); if (fileInput.files.length > 0) imgData = await uploadImage(fileInput.files[0]);
 
-            const stockRef = getColRef('amulet_stock').doc();
-            const batch = db.batch();
-
-            // 1. บันทึกข้อมูลเข้าตู้ (เอา cost ออกเพื่อความปลอดภัยของ Payload API)
-            batch.set(stockRef, {
-                code, name, category, price, status: 'AVAILABLE',
+            await getColRef('amulet_stock').add({
+                code, name, category, cost, price, status: 'AVAILABLE',
                 imageUrl: '', thumbUrl: '', imagePath: '', thumbPath: '', ...(imgData || {}),
                 customerName: $('stockCustomerName').value.trim(), customerPhone: $('stockCustomerPhone').value.trim(),
                 date: selectedDate, timestamp: serverTs(), tradingHistory: []
             });
-
-            // 2. ซ่อนราคาทุนแยก Collection อย่างเด็ดขาด
-            batch.set(getColRef('amulets_cost').doc(stockRef.id), { cost: cost, timestamp: serverTs() });
-
-            await batch.commit();
             closeAddStockModal(); showCustomAlert('สำเร็จ', 'เพิ่มพระเข้าตู้เรียบร้อย', 'success');
         } catch (err) { if (imgData) await deleteStockImages(imgData); showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
         finally { btn.disabled = false; btn.innerText = 'บันทึกเข้าตู้พระ'; }
@@ -961,20 +922,12 @@
             const newPrice = checkMoney(Number($('editStockPrice').value), 'ราคาเปิดเช่า'), newCost = checkMoney(Number($('editStockCost').value), 'ราคาทุน');
             const fileInput = $('editStockImage'); if (fileInput.files.length > 0) newImgData = await uploadImage(fileInput.files[0]);
 
-            const batch = db.batch();
-            const stockUpdateData = { name: $('editStockName').value.trim(), category: $('editStockCategory').value.trim(), price: newPrice, customerName: $('editCustomerName').value.trim(), customerPhone: $('editCustomerPhone').value.trim(), remark: $('editStockRemark').value };
-            if (newImgData) Object.assign(stockUpdateData, newImgData);
-            
+            const updateData = { name: $('editStockName').value.trim(), category: $('editStockCategory').value.trim(), price: newPrice, cost: newCost, customerName: $('editCustomerName').value.trim(), customerPhone: $('editCustomerPhone').value.trim(), remark: $('editStockRemark').value };
+            if (newImgData) Object.assign(updateData, newImgData);
             if (oldPrice !== newPrice || oldCost !== newCost) {
-                stockUpdateData.priceHistory = firebase.firestore.FieldValue.arrayUnion({ date: selectedDate, time: nowTime(), oldCost, newCost, oldPrice, newPrice });
+                updateData.priceHistory = firebase.firestore.FieldValue.arrayUnion({ date: selectedDate, time: nowTime(), oldCost, newCost, oldPrice, newPrice });
             }
-            
-            // อัปเดตข้อมูลทั่วไป
-            batch.update(getColRef('amulet_stock').doc(id), stockUpdateData);
-            // อัปเดตราคาทุนแยกต่างหาก
-            batch.set(getColRef('amulets_cost').doc(id), { cost: newCost }, { merge: true });
-
-            await batch.commit();
+            await getColRef('amulet_stock').doc(id).update(updateData);
             if (newImgData) await deleteStockImages(oldStock);
             closeEditStockModal(); showCustomAlert('สำเร็จ', 'อัปเดตข้อมูลพระเครื่องเรียบร้อย', 'success');
         } catch (err) { if (newImgData) await deleteStockImages(newImgData); showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
@@ -1027,27 +980,23 @@
 
     function openBuyBackModal(id) {
         const s = allStock.find(x => x.id === id); if (!s) return;
-        \$('bbStockId').value = id; $('bbAmuletName').innerText = s.name \vert{}\vert{} '';$('bbCost').value = ''; $('bbPrice').value = ''; selectBbWallet('TRANSFER');$('buyBackModal').classList.remove('hidden');
+        $('bbStockId').value = id; $('bbAmuletName').innerText = s.name || '';
+        $('bbCost').value = ''; $('bbPrice').value = ''; selectBbWallet('TRANSFER'); $('buyBackModal').classList.remove('hidden');
     }
-    function closeBuyBackModal() { \$('buyBackModal').classList.add('hidden'); }
+    function closeBuyBackModal() { $('buyBackModal').classList.add('hidden'); }
 
     async function handleBuyBackSubmit(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitBb'); btn.disabled = true; btn.innerText = 'กำลังบันทึก...';
+        const btn = $('btnSubmitBb'); btn.disabled = true; btn.innerText = 'กำลังบันทึก...';
         try {
-            const id = \$('bbStockId').value, s = allStock.find(x => x.id === id);
+            const id = $('bbStockId').value, s = allStock.find(x => x.id === id);
             if (!s || s.status !== 'SOLD') throw new Error('สถานะพระไม่ถูกต้อง');
             const cost = checkMoney(Number($('bbCost').value), 'ราคารับซื้อคืน'), price = checkMoney(Number($('bbPrice').value), 'ราคาเปิดใหม่');
             const batch = db.batch();
             batch.set(getColRef('transactions').doc(), buildTx({ description: `รับเช่าคืน: ${s.name}`, category: 'BUY', amount: cost, cost: 0, wallet: currentBbWallet, stockId: id }));
             const history = [...(s.tradingHistory || []), { type: 'BUY_BACK', date: selectedDate, customerName: s.customerName || 'ไม่ระบุ', customerPhone: s.customerPhone || '-', amount: cost }];
             const del = firebase.firestore.FieldValue.delete();
-            
-            // อัปเดตตู้พระ
-            batch.update(getColRef('amulet_stock').doc(id), { status: 'AVAILABLE', price, customerName: '', customerPhone: '', agreedPrice: 0, paidAmount: 0, payments: [], soldDate: del, soldTime: del, sellAmount: del, sellWallet: del, tradingHistory: history });
-            // เก็บราคาทุนใหม่ลงห้องนิรภัย
-            batch.set(getColRef('amulets_cost').doc(id), { cost: cost, timestamp: serverTs() }, { merge: true });
-
+            batch.update(getColRef('amulet_stock').doc(id), { status: 'AVAILABLE', cost, price, customerName: '', customerPhone: '', agreedPrice: 0, paidAmount: 0, payments: [], soldDate: del, soldTime: del, sellAmount: del, sellWallet: del, tradingHistory: history });
             await batch.commit(); closeBuyBackModal(); showCustomAlert('สำเร็จ', 'นำพระกลับเข้าตู้แล้ว', 'success');
         } catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); }
         finally { btn.disabled = false; btn.innerText = 'ยืนยันทำรายการ'; }
@@ -1057,38 +1006,39 @@
         const s = allStock.find(x => x.id === stockId); if (!s) return;
         currentLedgerAmulet = s;
         const agreed = Number(s.agreedPrice || s.price || 0), paid = Number(s.paidAmount || 0), remain = agreed - paid;
-        \$('ledgerAmuletName').innerText = `${s.code || 'N/A'} - ${s.name || 'ไม่ระบุ'}`;
-        \$('ledgerCustomer').innerHTML = `<i class="ph-fill ph-user"></i> ${esc(s.customerName || 'ไม่ระบุ')} • <i class="ph-fill ph-phone"></i> ${esc(s.customerPhone || '-')}`;
-        \$('ledgerTotalPrice').innerText = fmt(agreed); $('ledgerPaidAmount').innerText = fmt(paid);$('ledgerRemainAmount').innerText = fmt(remain);
+        $('ledgerAmuletName').innerText = `${s.code || 'N/A'} - ${s.name || 'ไม่ระบุ'}`;
+        $('ledgerCustomer').innerHTML = `<i class="ph-fill ph-user"></i> ${esc(s.customerName || 'ไม่ระบุ')} • <i class="ph-fill ph-phone"></i> ${esc(s.customerPhone || '-')}`;
+        $('ledgerTotalPrice').innerText = fmt(agreed); $('ledgerPaidAmount').innerText = fmt(paid); $('ledgerRemainAmount').innerText = fmt(remain);
 
-        const histList = \$('ledgerHistoryList');
+        const histList = $('ledgerHistoryList');
         if (s.payments && s.payments.length) {
             const typeName = { DEPOSIT: 'มัดจำ', INSTALLMENT: 'ค่างวด', FULL: 'ชำระเต็ม' };
             histList.innerHTML = s.payments.map((p, i) => `<div class="flex justify-between items-center p-3 bg-white rounded-xl border border-slate-100 text-sm shadow-sm"><div><p class="font-bold text-slate-700">งวด ${i + 1} <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded ml-1">${esc(typeName[p.type] || 'ค่างวด')}</span></p><p class="text-[10px] text-slate-400 mt-1">${esc(p.date)} • ${esc(p.time)}</p></div><div class="text-right"><p class="font-bold text-emerald-600">+${fmt(p.amount)} ฿</p></div></div>`).join('');
         } else { histList.innerHTML = `<p class="text-center text-sm text-slate-400 py-4">ยังไม่มีประวัติชำระเงิน</p>`; }
-        \$('ledgerActionArea').innerHTML = remain <= 0 ? `<div class="bg-emerald-50 text-emerald-700 text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-2"><i class="ph-fill ph-check-circle text-xl"></i> ชำระครบเต็มจำนวนแล้ว</div>` : `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-plus text-lg"></i> บันทึกรับค่างวด (ยอดเหลือ ${fmt(remain)})</button>`;
-        \$('amuletLedgerModal').classList.remove('hidden');
+        $('ledgerActionArea').innerHTML = remain <= 0 ? `<div class="bg-emerald-50 text-emerald-700 text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-2"><i class="ph-fill ph-check-circle text-xl"></i> ชำระครบเต็มจำนวนแล้ว</div>` : `<button onclick="handlePayInstallment()" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2"><i class="ph-bold ph-plus text-lg"></i> บันทึกรับค่างวด (ยอดเหลือ ${fmt(remain)})</button>`;
+        $('amuletLedgerModal').classList.remove('hidden');
     }
-    function closeAmuletLedgerModal() { \$('amuletLedgerModal').classList.add('hidden'); currentLedgerAmulet = null; }
+    function closeAmuletLedgerModal() { $('amuletLedgerModal').classList.add('hidden'); currentLedgerAmulet = null; }
 
     function handlePayInstallment() {
         const s = currentLedgerAmulet; if (!s) return;
         const remain = Number(s.agreedPrice || s.price || 0) - Number(s.paidAmount || 0);
-        \$('payInstCustName').value = s.customerName || ''; $('payInstCustPhone').value = s.customerPhone \vert{}\vert{} '';$('payInstRemainText').innerText = `ยอดคงเหลือ: ${fmt(remain)} ฿`; $('payInstAmount').max = remain; $('payInstAmount').value = remain;
-        selectInstWallet('TRANSFER'); \$('payInstallmentModal').classList.remove('hidden');
+        $('payInstCustName').value = s.customerName || ''; $('payInstCustPhone').value = s.customerPhone || '';
+        $('payInstRemainText').innerText = `ยอดคงเหลือ: ${fmt(remain)} ฿`; $('payInstAmount').max = remain; $('payInstAmount').value = remain;
+        selectInstWallet('TRANSFER'); $('payInstallmentModal').classList.remove('hidden');
     }
-    function closePayInstallmentModal() { \$('payInstallmentModal').classList.add('hidden'); }
+    function closePayInstallmentModal() { $('payInstallmentModal').classList.add('hidden'); }
 
     async function submitPayInstallment(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitInst'); btn.disabled = true; btn.innerText = 'กำลังประมวลผล...';
+        const btn = $('btnSubmitInst'); btn.disabled = true; btn.innerText = 'กำลังประมวลผล...';
         try {
             const s = currentLedgerAmulet ? allStock.find(x => x.id === currentLedgerAmulet.id) : null;
             if (!s || s.status !== 'RESERVED') throw new Error('สถานะไม่ถูกต้อง');
             const agreed = Number(s.agreedPrice || s.price || 0), paid = Number(s.paidAmount || 0), remain = agreed - paid;
-            const payAmt = checkMoney(Number(\$('payInstAmount').value), 'ยอดชำระ');
+            const payAmt = checkMoney(Number($('payInstAmount').value), 'ยอดชำระ');
             if (payAmt <= 0 || payAmt > remain) throw new Error('ยอดชำระไม่ถูกต้อง');
-            const newName = $('payInstCustName').value.trim() \vert{}\vert{} 'ไม่ระบุ', newPhone = $('payInstCustPhone').value.trim() || '-';
+            const newName = $('payInstCustName').value.trim() || 'ไม่ระบุ', newPhone = $('payInstCustPhone').value.trim() || '-';
             const isFullNow = (paid + payAmt) >= agreed;
             const cost = Number(s.cost || 0);
 
@@ -1110,12 +1060,12 @@
 
     function openImageViewer(id) {
         const s = allStock.find(x => x.id === id); if (!s) return;
-        \$('viewerImageSrc').src = s.imageUrl || 'https://placehold.co/400x400/eeeeee/999999?text=No+Image';
-        $('viewerCode').innerText = s.code \vert{}\vert{} 'N/A';$('viewerCategory').innerText = s.category || 'ทั่วไป';
-        \$('viewerName').innerText = s.name || 'ไม่ระบุชื่อ'; $('viewerPrice').innerText = fmt(s.price) + ' ฿'; $('viewerCost').innerText = fmt(s.cost) + ' ฿';
+        $('viewerImageSrc').src = s.imageUrl || 'https://placehold.co/400x400/eeeeee/999999?text=No+Image';
+        $('viewerCode').innerText = s.code || 'N/A'; $('viewerCategory').innerText = s.category || 'ทั่วไป';
+        $('viewerName').innerText = s.name || 'ไม่ระบุชื่อ'; $('viewerPrice').innerText = fmt(s.price) + ' ฿'; $('viewerCost').innerText = fmt(s.cost) + ' ฿';
 
         const hasRemark = s.remark && String(s.remark).trim() !== '';
-        $('viewerRemarkContainer').classList.toggle('hidden', !hasRemark);$('viewerRemarkText').innerText = hasRemark ? s.remark : '';
+        $('viewerRemarkContainer').classList.toggle('hidden', !hasRemark); $('viewerRemarkText').innerText = hasRemark ? s.remark : '';
 
         let historyHtml = '';
         if (s.tradingHistory && s.tradingHistory.length) {
@@ -1125,25 +1075,26 @@
                 return '';
             }).join('');
         }
-        $('viewerTradingHistoryContainer').classList.toggle('hidden', !historyHtml);$('viewerTradingHistoryList').innerHTML = historyHtml;
+        $('viewerTradingHistoryContainer').classList.toggle('hidden', !historyHtml); $('viewerTradingHistoryList').innerHTML = historyHtml;
 
         const reserved = s.status === 'RESERVED';
-        \$('viewerCurrentStatus').classList.toggle('hidden', !reserved);
-        if (reserved) { $('viewerCurrentCustomer').innerText = s.customerName \vert{}\vert{} '-';$('viewerCurrentPhone').innerText = s.customerPhone || '-'; }
+        $('viewerCurrentStatus').classList.toggle('hidden', !reserved);
+        if (reserved) { $('viewerCurrentCustomer').innerText = s.customerName || '-'; $('viewerCurrentPhone').innerText = s.customerPhone || '-'; }
 
         const hasPH = s.priceHistory && s.priceHistory.length;
-        $('viewerPriceHistoryContainer').classList.toggle('hidden', !hasPH);$('viewerPriceHistoryList').innerHTML = hasPH ? s.priceHistory.slice().reverse().map(h => `<div class="bg-white p-3 rounded-xl border text-[11px]"><span class="text-slate-400">${esc(h.date)}</span> ปรับเปิดเช่า: <b>${fmt(h.oldPrice)} -> ${fmt(h.newPrice)}</b></div>`).join('') : '';
-        \$('imageViewerModal').classList.remove('hidden');
+        $('viewerPriceHistoryContainer').classList.toggle('hidden', !hasPH);
+        $('viewerPriceHistoryList').innerHTML = hasPH ? s.priceHistory.slice().reverse().map(h => `<div class="bg-white p-3 rounded-xl border text-[11px]"><span class="text-slate-400">${esc(h.date)}</span> ปรับเปิดเช่า: <b>${fmt(h.oldPrice)} -> ${fmt(h.newPrice)}</b></div>`).join('') : '';
+        $('imageViewerModal').classList.remove('hidden');
     }
-    function closeImageViewer() { $('imageViewerModal').classList.add('hidden'); setTimeout(() => {$('viewerImageSrc').src = ''; }, 200); }
+    function closeImageViewer() { $('imageViewerModal').classList.add('hidden'); setTimeout(() => { $('viewerImageSrc').src = ''; }, 200); }
 
     function showCustomAlert(title, msg, type) {
         $('infoTitle').innerText = title; $('infoDesc').innerText = msg;
-        const b = \$('infoIconBox');
+        const b = $('infoIconBox');
         if (type === 'success') { b.className = 'w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-emerald-50'; b.innerHTML = '<i class="ph-fill ph-check-circle text-4xl"></i>'; }
         else if (type === 'error') { b.className = 'w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-rose-50'; b.innerHTML = '<i class="ph-fill ph-warning text-4xl"></i>'; }
         else { b.className = 'w-20 h-20 bg-amber-100 text-[#a16207] rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-amber-50'; b.innerHTML = '<i class="ph-fill ph-info text-4xl"></i>'; }
-        \$('generalInfoModal').classList.remove('hidden');
+        $('generalInfoModal').classList.remove('hidden');
     }
 
     function seedDirectory() {
@@ -1156,24 +1107,24 @@
         const q = String(search || '').toLowerCase();
         const filtered = allDirectory.filter(d => String(d.name || '').toLowerCase().includes(q) || String(d.category || '').toLowerCase().includes(q));
         const groups = {}; filtered.forEach(d => { (groups[d.category] = groups[d.category] || []).push(d); });
-        const cont = \$('directoryContent');
+        const cont = $('directoryContent');
         if (!Object.keys(groups).length) { cont.innerHTML = `<div class="text-center py-10 text-slate-400 font-bold border-dashed border-2 rounded-2xl bg-slate-50">ไม่พบข้อมูลพิมพ์พระ</div>`; return; }
-        cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-[#7a1019] bg-rose-50 px-4 py-2 rounded-xl">${esc(cat)}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-white border rounded-xl p-3 flex justify-between items-center gap-2"><span class="text-sm font-bold text-slate-700">\${esc(item.name)}</span><div class="flex gap-1.5 shrink-0"><button onclick="editDirItem('\${item.id}')" class="text-slate-400 hover:text-amber-600 p-2"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="deleteDirItem('\${item.id}')" class="text-slate-400 hover:text-rose-600 p-2"><i class="ph-bold ph-trash"></i></button>\${pickMode ? `<button onclick="selectDirItem('${item.id}')" class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">เลือก</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
+        cont.innerHTML = Object.keys(groups).map(cat => `<div class="space-y-2"><h4 class="font-bold text-sm text-[#7a1019] bg-rose-50 px-4 py-2 rounded-xl">${esc(cat)}</h4><div class="grid grid-cols-1 gap-2">${groups[cat].map(item => `<div class="bg-white border rounded-xl p-3 flex justify-between items-center gap-2"><span class="text-sm font-bold text-slate-700">${esc(item.name)}</span><div class="flex gap-1.5 shrink-0"><button onclick="editDirItem('${item.id}')" class="text-slate-400 hover:text-amber-600 p-2"><i class="ph-bold ph-pencil-simple"></i></button><button onclick="deleteDirItem('${item.id}')" class="text-slate-400 hover:text-rose-600 p-2"><i class="ph-bold ph-trash"></i></button>${pickMode ? `<button onclick="selectDirItem('${item.id}')" class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg">เลือก</button>` : ''}</div></div>`).join('')}</div></div>`).join('');
     }
 
-    function openDirectoryForPicking() { pickMode = true; \$('directorySearch').value = ''; renderDirectory(); $('addModal').classList.add('hidden');$('directoryModal').classList.remove('hidden'); }
-    function openDirectoryModal() { pickMode = false; $('directorySearch').value = ''; renderDirectory();$('directoryModal').classList.remove('hidden'); }
-    function closeDirectoryModal() { \$('directoryModal').classList.add('hidden'); if (pickMode) { pickMode = false; openAddModal(); } }
-    function selectDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; \$('formDesc').value = d.name || ''; closeDirectoryModal(); }
-    function openAddDirModal() { $('dirEditId').value = '';$('dirCategory').value = ''; $('dirName').value = '';$('addDirModal').classList.remove('hidden'); }
-    function closeAddDirModal() { \$('addDirModal').classList.add('hidden'); }
-    function editDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('dirEditId').value = id; $('dirCategory').value = d.category || ''; $('dirName').value = d.name \vert{}\vert{} '';$('addDirModal').classList.remove('hidden'); }
+    function openDirectoryForPicking() { pickMode = true; $('directorySearch').value = ''; renderDirectory(); $('addModal').classList.add('hidden'); $('directoryModal').classList.remove('hidden'); }
+    function openDirectoryModal() { pickMode = false; $('directorySearch').value = ''; renderDirectory(); $('directoryModal').classList.remove('hidden'); }
+    function closeDirectoryModal() { $('directoryModal').classList.add('hidden'); if (pickMode) { pickMode = false; openAddModal(); } }
+    function selectDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('formDesc').value = d.name || ''; closeDirectoryModal(); }
+    function openAddDirModal() { $('dirEditId').value = ''; $('dirCategory').value = ''; $('dirName').value = ''; $('addDirModal').classList.remove('hidden'); }
+    function closeAddDirModal() { $('addDirModal').classList.add('hidden'); }
+    function editDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d) return; $('dirEditId').value = id; $('dirCategory').value = d.category || ''; $('dirName').value = d.name || ''; $('addDirModal').classList.remove('hidden'); }
     async function deleteDirItem(id) { const d = allDirectory.find(x => x.id === id); if (!d || !confirm(`ลบพิมพ์ "${d.name}" ?`)) return; try { await getColRef('amulet_directory').doc(id).delete(); } catch (err) { showCustomAlert('ข้อผิดพลาด', err.message, 'error'); } }
     async function handleDirSubmit(e) {
         e.preventDefault();
-        const btn = \$('btnSubmitDir'); btn.disabled = true;
+        const btn = $('btnSubmitDir'); btn.disabled = true;
         try {
-            const id = \$('dirEditId').value, data = { category: $('dirCategory').value.trim(), name:$('dirName').value.trim() };
+            const id = $('dirEditId').value, data = { category: $('dirCategory').value.trim(), name: $('dirName').value.trim() };
             if (!data.category || !data.name) throw new Error('กรุณากรอกข้อมูลให้ครบ');
             if (id) await getColRef('amulet_directory').doc(id).update(data); else await getColRef('amulet_directory').add(data);
             closeAddDirModal();
