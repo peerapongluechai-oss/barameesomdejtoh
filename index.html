@@ -473,7 +473,7 @@
     'use strict';
 
     const firebaseConfig = {
-      apiKey: "***************************************",
+      apiKey: "AIzaSyCsCLG8M2Xl02CUeNsmzWvhPE95ELlzXes", // ใส่ API Key ให้เรียบร้อย
       authDomain: "baramee-somdej-toh.firebaseapp.com",
       projectId: "baramee-somdej-toh",
       storageBucket: "baramee-somdej-toh.firebasestorage.app",
@@ -517,7 +517,6 @@
     const MODAL_IDS = ['exportCsvModal', 'addModal', 'addStockModal', 'editStockModal', 'sellStockModal', 'buyBackModal', 'amuletLedgerModal', 'payInstallmentModal', 'imageViewerModal', 'directoryModal', 'addDirModal', 'generalInfoModal'];
     function closeAllModals() { MODAL_IDS.forEach(id => $(id).classList.add('hidden')); }
     
-    // แก้ไขระบบแสดงหน้าจอให้มั่นใจว่าอันเก่าถูกซ่อนสนิท
     function showOnly(screenId) { 
         ['loginScreen', 'loadingScreen', 'expiredScreen', 'mainApp'].forEach(id => {
             const el = $(id);
@@ -540,7 +539,6 @@
             
             showOnly('loadingScreen');
             
-            // รอเล็กน้อยให้หน้าจอถูกเคลียร์เรียบร้อยก่อนเปิดแอปหลัก
             setTimeout(() => {
                 serverDenied = false;
                 const exp = new Date('2030-12-31');
@@ -549,7 +547,6 @@
             
         } catch (error) {
             console.error("Auth Exception:", error);
-            // ถ้ามีปัญหา บังคับเปิดแอปให้เลย
             showOnly('mainApp');
             if (!dataStarted) startData();
         }
@@ -575,7 +572,6 @@
                 $(id).classList.toggle('top-14', showBanner); $(id).classList.toggle('top-6', !showBanner);
             });
             
-            // บังคับโชว์หน้าหลัก ทับการค้างหน้า Loading
             showOnly('mainApp'); 
             $('appDatePicker').value = selectedDate; 
             switchTab(currentActiveTab);
@@ -583,7 +579,6 @@
             if (!dataStarted) startData();
         } catch (err) {
             console.error("Unlock Error:", err);
-            // เผื่อพังใน try บังคับให้โชว์อยู่ดี
             showOnly('mainApp');
         }
     }
@@ -611,7 +606,6 @@
             const password = $('loginPassword').value;
             await auth.signInWithEmailAndPassword(email, password);
         } catch (err) {
-            // ถ้ารหัสผ่านผิด ให้บังคับเปิดเข้าใช้งานเลยตามความประสงค์ในโค้ดเก่าของคุณ
             console.warn("Auth Failed. Bypassing...");
             showOnly('loadingScreen');
             setTimeout(() => {
